@@ -1,0 +1,89 @@
+:root {
+  --ink: #14213D;
+  --ink-soft: #3A4451;
+  --paper: #F5F6F8;
+  --paper-raised: #FFFFFF;
+  --border: #E1E4E8;
+  --teal: #1F6F5C;
+  --teal-soft: #E1F0EC;
+  --rust: #B5442E;
+  --rust-soft: #F6E6E2;
+  --amber: #C87F0A;
+  --amber-soft: #FCEFD9;
+  --sky: #2B6CB0;
+  --sky-soft: #E3EEFB;
+}
+
+body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, sans-serif; }
+
+/* Sidebar */
+.sf-sidebar {
+  width: 235px; min-height: 100vh; background: var(--ink); color: #E7EAF0;
+  padding: 24px 16px; position: fixed; left: 0; top: 0;
+}
+.sf-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; padding: 0 6px; }
+.sf-brand-mark {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--sky), #4a8fd6);
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff;
+}
+.sf-brand-sub { font-size: 11px; color: #8FA0C2; padding: 0 6px 20px; }
+.sf-nav-link {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px;
+  color: #A9B4C9; font-size: 14px; font-weight: 500; text-decoration: none; margin-bottom: 4px;
+}
+.sf-nav-link:hover { background: #1E2C4F; color: #fff; }
+.sf-nav-link.active { background: var(--sky); color: #fff; }
+.sf-main { margin-left: 235px; padding: 22px 40px; }
+
+/* Cards */
+.sf-stat-card { background: var(--paper-raised); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
+.sf-stat-label { font-size: 12px; color: var(--ink-soft); font-weight: 600; margin-bottom: 4px; }
+.sf-stat-value { font-size: 24px; font-weight: 700; }
+.sf-stat-value.danger { color: var(--rust); }
+.sf-panel { background: var(--paper-raised); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.sf-panel-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+
+/* Table */
+.sf-table thead th {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft);
+  background: #FAFBFC; font-weight: 700; border-bottom: 1px solid var(--border);
+}
+.sf-table td { font-size: 13.5px; vertical-align: middle; }
+.sf-table-compact th, .sf-table-compact td { padding: 7px 12px; font-size: 12.5px; }
+
+/* Badges */
+.sf-badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
+.sf-badge-teal { background: var(--teal-soft); color: var(--teal); }
+.sf-badge-rust { background: var(--rust-soft); color: var(--rust); }
+.sf-badge-amber { background: var(--amber-soft); color: var(--amber); }
+.sf-badge-sky { background: var(--sky-soft); color: var(--sky); }
+
+/* Gauge */
+.sf-gauge-track { width: 70px; height: 6px; border-radius: 4px; background: #E9ECEF; overflow: hidden; }
+.sf-gauge-fill { height: 100%; border-radius: 4px; }
+
+/* Ligne d'en-tête de groupe (catégorie) dans le tableau des articles */
+.sf-group-row td { background: var(--paper); font-size: 12px; padding: 6px 12px; border-top: 1px solid var(--border); }
+
+/* Mini-KPIs sous le graphique Entrées/Sorties */
+.sf-mini-kpis { display: flex; gap: 20px; padding-top: 10px; border-top: 1px solid var(--border); }
+.sf-mini-kpis > div { display: flex; flex-direction: column; }
+.sf-mini-kpi-value { font-weight: 700; font-size: 15px; font-family: monospace; }
+.sf-mini-kpi-label { font-size: 11px; color: var(--ink-soft); }
+
+/* Buttons */
+.btn-sf-primary { background: var(--ink); color: #fff; border: none; font-weight: 600; font-size: 13px; }
+.btn-sf-primary:hover { background: #0A1428; color: #fff; }
+.btn-sf-outline { background: transparent; border: 1px solid var(--border); color: var(--ink); font-weight: 600; font-size: 13px; }
+
+/* Login */
+.sf-login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--ink) 0%, #0A1428 100%);
+}
+.sf-login-card { background: var(--paper-raised); border-radius: 16px; padding: 40px; width: 400px; max-width: 92vw; box-shadow: 0 24px 60px rgba(0,0,0,0.35); }
+
+/* Criticité badge */
+.sf-crit-critique { background: var(--rust-soft); color: var(--rust); }
+.sf-crit-normal { background: var(--sky-soft); color: var(--sky); }
