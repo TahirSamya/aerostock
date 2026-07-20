@@ -44,11 +44,7 @@ class TransfertController extends Controller
                     'date_transfert' => now()->toDateString(),
                 ]);
 
-                // Si on transfère TOUT le stock, l'emplacement du produit change définitivement.
-                // Si c'est un transfert partiel, on garde l'emplacement d'origine par simplicité
-                // (une vraie gestion multi-emplacements demanderait une table de stock par
-                // emplacement — hors périmètre de ce prototype, mentionné en perspective).
-                if ($data['quantite'] === $produit->quantite) {
+                 if ($data['quantite'] === $produit->quantite) {
                     $produit->update(['emplacement' => $data['emplacement_destination']]);
                 }
             });
