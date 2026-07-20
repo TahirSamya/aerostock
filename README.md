@@ -1,6 +1,6 @@
 # AeroStock
 
-Application de gestion de stock développée dans le cadre de mon PFE. Le thème choisi est un contexte aéroportuaire (inspiré de l'aéroport Mohammed V), mais il s'agit d'un prototype académique, pas d'un système connecté à l'ONDA ou à des infrastructures réelles.
+Application de gestion de stock développée dans le cadre de notre PFE. Le thème choisi est un contexte aéroportuaire, mais il s'agit d'un prototype académique, pas d'un système connecté à l'ONDA ou à des infrastructures réelles.
 
 ## Stack
 
