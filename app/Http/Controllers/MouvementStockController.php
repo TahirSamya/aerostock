@@ -143,6 +143,8 @@ class MouvementStockController extends Controller
             $handle = fopen('php://output', 'w');
             // BOM UTF-8 pour qu'Excel affiche correctement les accents
             fwrite($handle, "\xEF\xBB\xBF");
+            // Force Excel à utiliser la virgule comme séparateur (voir ProduitController::exportCsv)
+            fwrite($handle, "sep=,\r\n");
             fputcsv($handle, ['Date', 'Article', 'Référence', 'Type', 'Quantité', 'Motif', 'Agent']);
 
             foreach ($mouvements as $m) {

@@ -28,7 +28,7 @@
         </div>
         <div class="doc-title">
             <h2>Bon de mouvement N°{{ str_pad($mouvement->id, 5, '0', STR_PAD_LEFT) }}</h2>
-            <div class="subtitle">Émis le {{ now()->format('d/m/Y à H:i') }}</div>
+            <div class="subtitle">Émis le {{ now('Africa/Casablanca')->format('d/m/Y à H:i') }}</div>
         </div>
     </div>
 
@@ -52,10 +52,6 @@
     <div class="signature">
         <div>Signature agent magasin</div>
         <div>Signature responsable technique</div>
-    </div>
-
-    <div class="footer">
-        Document généré automatiquement par AeroStock — usage interne, prototype académique (PFE).
     </div>
 </body>
 </html>

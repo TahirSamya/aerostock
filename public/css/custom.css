@@ -72,6 +72,10 @@ body { background: var(--paper); color: var(--ink); font-family: 'Inter', -apple
 .sf-mini-kpi-value { font-weight: 700; font-size: 15px; font-family: monospace; }
 .sf-mini-kpi-label { font-size: 11px; color: var(--ink-soft); }
 
+/* Sections dans les formulaires (modals) */
+.sf-form-section { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--sky); margin: 14px 0 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.sf-form-section:first-child { margin-top: 0; }
+
 /* Buttons */
 .btn-sf-primary { background: var(--ink); color: #fff; border: none; font-weight: 600; font-size: 13px; }
 .btn-sf-primary:hover { background: #0A1428; color: #fff; }

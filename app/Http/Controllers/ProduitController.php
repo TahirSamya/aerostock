@@ -131,6 +131,10 @@ class ProduitController extends Controller
         $callback = function () use ($produits) {
             $handle = fopen('php://output', 'w');
             fwrite($handle, "\xEF\xBB\xBF");
+            // Force Excel à utiliser la virgule comme séparateur, quelle que soit la config
+            // régionale de l'ordinateur (sans cette ligne, Excel FR/MA — qui utilise la virgule
+            // comme séparateur décimal — n'arrive pas à séparer les colonnes automatiquement).
+            fwrite($handle, "sep=,\r\n");
             fputcsv($handle, ['Nom', 'Référence', 'Catégorie', 'Fournisseur', 'Emplacement', 'Criticité', 'Quantité', 'Seuil alerte', 'Stock max', 'Prix achat', 'Prix vente']);
 
             foreach ($produits as $p) {

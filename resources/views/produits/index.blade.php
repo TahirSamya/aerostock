@@ -119,19 +119,29 @@
                                             <select class="form-select" name="criticite">
                                                 <option value="normal" @selected($p->criticite=='normal')>Normal</option>
                                                 <option value="critique" @selected($p->criticite=='critique')>Critique</option>
-                                            </select></div>
+                                            </select>
+                                            <div class="form-text">"Critique" = une rupture bloquerait une opération importante.</div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Seuil alerte</label>
-                                            <input type="number" min="0" class="form-control" name="seuil_alerte" value="{{ $p->seuil_alerte }}" required></div>
+                                            <input type="number" min="0" class="form-control" name="seuil_alerte" value="{{ $p->seuil_alerte }}" required>
+                                            <div class="form-text">Sous ce niveau, alerte au tableau de bord.</div>
+                                        </div>
                                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Stock max (capacité)</label>
-                                            <input type="number" min="0" class="form-control" name="quantite_max" value="{{ $p->quantite_max }}"></div>
+                                            <input type="number" min="0" class="form-control" name="quantite_max" value="{{ $p->quantite_max }}">
+                                            <div class="form-text">Niveau "plein" (100%) sur la jauge de stock.</div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Prix d'achat</label>
-                                            <input type="number" step="0.01" min="0" class="form-control" name="prix_achat" value="{{ $p->prix_achat }}" required></div>
+                                            <input type="number" step="0.01" min="0" class="form-control" name="prix_achat" value="{{ $p->prix_achat }}" required>
+                                            <div class="form-text">Sert au calcul de la valeur du stock.</div>
+                                        </div>
                                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Prix de vente</label>
-                                            <input type="number" step="0.01" min="0" class="form-control" name="prix_vente" value="{{ $p->prix_vente }}" required></div>
+                                            <input type="number" step="0.01" min="0" class="form-control" name="prix_vente" value="{{ $p->prix_vente }}" required>
+                                            <div class="form-text">Utile seulement si refacturé en interne.</div>
+                                        </div>
                                     </div>
                                     <p class="text-muted small mb-0"><i class="bi bi-info-circle me-1"></i>La quantité se modifie uniquement via "Mouvements".</p>
                                 </div>
@@ -161,8 +171,9 @@
                 <div class="modal-header"><h5 class="modal-title">Nouvel article</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
+                    <div class="sf-form-section">Identification</div>
                     <div class="mb-3"><label class="form-label small fw-semibold">Nom</label>
-                        <input class="form-control" name="nom" required></div>
+                        <input class="form-control" name="nom" required placeholder="ex: Cartouche toner HP 26A"></div>
                     <div class="row">
                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Catégorie</label>
                             <select class="form-select" name="category_id" id="createCategorySelect" required onchange="majReferenceAuto()">
@@ -176,37 +187,53 @@
                             <div class="form-text">Générée automatiquement selon la catégorie (dernière référence + 1).</div>
                         </div>
                     </div>
-                    <div class="mb-3"><label class="form-label small fw-semibold">Fournisseur</label>
-                        <select class="form-select" name="fournisseur_id">
-                            <option value="">Aucun</option>
-                            @foreach($fournisseurs as $f)<option value="{{ $f->id }}">{{ $f->nom }}</option>@endforeach
-                        </select></div>
                     <div class="row">
-                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Emplacement</label>
-                            <input class="form-control" name="emplacement" placeholder="Magasin général, Local technique..."></div>
-                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Criticité</label>
-                            <select class="form-select" name="criticite">
-                                <option value="normal">Normal</option>
-                                <option value="critique">Critique</option>
+                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Fournisseur</label>
+                            <select class="form-select" name="fournisseur_id">
+                                <option value="">Aucun</option>
+                                @foreach($fournisseurs as $f)<option value="{{ $f->id }}">{{ $f->nom }}</option>@endforeach
                             </select></div>
+                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Emplacement</label>
+                            <input class="form-control" name="emplacement" placeholder="Magasin général, Local technique...">
+                            <div class="form-text">Lieu physique où trouver l'article.</div>
+                        </div>
                     </div>
+
+                    <div class="sf-form-section">Stock &amp; seuils</div>
                     <div class="row">
-                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Quantité initiale</label>
-                            <input type="number" min="0" class="form-control" name="quantite" value="0" required></div>
-                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Seuil alerte</label>
-                            <input type="number" min="0" class="form-control" name="seuil_alerte" value="5" required></div>
+                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Quantité de départ</label>
+                            <input type="number" min="0" class="form-control" name="quantite" value="0" required>
+                            <div class="form-text">Stock au moment de la création. Ensuite, ne se modifie que via "Mouvements" (entrée/sortie), jamais en éditant l'article.</div>
+                        </div>
+                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Seuil d'alerte</label>
+                            <input type="number" min="0" class="form-control" name="seuil_alerte" value="5" required>
+                            <div class="form-text">Sous ce niveau, l'article apparaît dans "Articles en alerte" au tableau de bord.</div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Stock max (capacité)</label>
                             <input type="number" min="0" class="form-control" name="quantite_max" placeholder="ex: 20">
                             <div class="form-text">Niveau considéré comme "plein" (100%) sur la jauge de stock.</div>
                         </div>
+                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Criticité</label>
+                            <select class="form-select" name="criticite">
+                                <option value="normal">Normal</option>
+                                <option value="critique">Critique</option>
+                            </select>
+                            <div class="form-text">"Critique" = une rupture bloquerait une opération importante (priorité de réappro plus élevée).</div>
+                        </div>
                     </div>
+
+                    <div class="sf-form-section">Tarification</div>
                     <div class="row">
                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Prix d'achat</label>
-                            <input type="number" step="0.01" min="0" class="form-control" name="prix_achat" value="0" required></div>
+                            <input type="number" step="0.01" min="0" class="form-control" name="prix_achat" value="0" required>
+                            <div class="form-text">Coût unitaire — sert à calculer la valeur totale du stock.</div>
+                        </div>
                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Prix de vente</label>
-                            <input type="number" step="0.01" min="0" class="form-control" name="prix_vente" value="0" required></div>
+                            <input type="number" step="0.01" min="0" class="form-control" name="prix_vente" value="0" required>
+                            <div class="form-text">Utile seulement si l'article est refacturé en interne. Sinon, laissez à 0.</div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
