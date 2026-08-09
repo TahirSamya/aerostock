@@ -36,6 +36,9 @@
         <a href="{{ route('commandes.index') }}" class="sf-nav-link {{ request()->routeIs('commandes.*') ? 'active' : '' }}">
             <i class="bi bi-cart-check"></i><span>Commandes</span>
         </a>
+        <a href="{{ route('statistiques.index') }}" class="sf-nav-link {{ request()->routeIs('statistiques.*') ? 'active' : '' }}">
+            <i class="bi bi-graph-up"></i><span>Statistiques</span>
+        </a>
         <a href="{{ route('categories.index') }}" class="sf-nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
             <i class="bi bi-tags"></i><span>Catégories</span>
         </a>

@@ -7,6 +7,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\MouvementStockController;
 use App\Http\Controllers\ProduitController;
+use App\Http\Controllers\StatistiqueController;
+use App\Http\Controllers\StockEmplacementController;
 use App\Http\Controllers\TransfertController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -22,8 +24,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/produits', [ProduitController::class, 'index'])->name('produits.index');
     Route::get('/produits/export/csv', [ProduitController::class, 'exportCsv'])->name('produits.export.csv');
+    Route::get('/produits/export/pdf', [ProduitController::class, 'exportPdf'])->name('produits.export.pdf');
     Route::post('/produits', [ProduitController::class, 'store'])->name('produits.store');
     Route::put('/produits/{produit}', [ProduitController::class, 'update'])->name('produits.update');
+    Route::post('/produits/{produit}/emplacements', [StockEmplacementController::class, 'store'])->name('produits.emplacements.store');
+    Route::delete('/produits/{produit}/emplacements/{emplacement}', [StockEmplacementController::class, 'destroy'])->name('produits.emplacements.destroy');
+
+    Route::get('/statistiques', [StatistiqueController::class, 'index'])->name('statistiques.index');
 
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');

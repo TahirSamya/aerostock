@@ -13,6 +13,9 @@
     <a href="{{ route('produits.export.csv') }}" class="btn btn-sf-outline">
         <i class="bi bi-file-earmark-spreadsheet me-1"></i> Exporter (Excel)
     </a>
+    <a href="{{ route('produits.export.pdf') }}" target="_blank" class="btn btn-sf-outline">
+        <i class="bi bi-file-earmark-pdf me-1"></i> Exporter (PDF)
+    </a>
 </div>
 
 <form method="GET" class="mb-3">
@@ -70,6 +73,15 @@
                     </td>
                     <td>{{ number_format($p->prix_vente, 2) }} MAD</td>
                     <td class="text-end">
+                        <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#emplacementsModal{{ $p->id }}" title="Répartition par emplacement">
+                            <i class="bi bi-geo-alt"></i>
+                        </button>
+                        <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#historiqueModal{{ $p->id }}" title="Historique du prix d'achat">
+                            <i class="bi bi-clock-history"></i>
+                        </button>
+                        <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#qrModal{{ $p->id }}" title="Code QR de la référence">
+                            <i class="bi bi-qr-code"></i>
+                        </button>
                         <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#editModal{{ $p->id }}">
                             <i class="bi bi-pencil"></i>
                         </button>
@@ -82,7 +94,101 @@
                     </td>
                 </tr>
 
-                <!-- Modal édition -->
+                <!-- Modal répartition par emplacement -->
+                <div class="modal fade" id="emplacementsModal{{ $p->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Répartition — {{ $p->nom }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <div class="modal-body">
+                                <p class="text-muted small">Stock total de l'article : <strong>{{ $p->quantite }}</strong>. Répartissez-le entre plusieurs lieux physiques ci-dessous.</p>
+                                @if($p->emplacements->isNotEmpty())
+                                    <table class="table sf-table sf-table-compact mb-3">
+                                        <thead><tr><th>Emplacement</th><th>Quantité</th><th></th></tr></thead>
+                                        <tbody>
+                                            @foreach($p->emplacements as $e)
+                                                <tr>
+                                                    <td>{{ $e->emplacement }}</td>
+                                                    <td style="font-family:monospace">{{ $e->quantite }}</td>
+                                                    <td class="text-end">
+                                                        <form action="{{ route('produits.emplacements.destroy', [$p, $e]) }}" method="POST" onsubmit="return confirm('Retirer cet emplacement ?')">
+                                                            @csrf @method('DELETE')
+                                                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @endif
+                                <div class="d-flex justify-content-between small mb-2">
+                                    <span class="text-muted">Réparti : {{ $p->quantiteAffectee() }} / {{ $p->quantite }}</span>
+                                    @if($p->quantiteNonAffectee() > 0)
+                                        <span class="sf-badge sf-badge-amber">{{ $p->quantiteNonAffectee() }} non affecté(s)</span>
+                                    @endif
+                                </div>
+                                <form action="{{ route('produits.emplacements.store', $p) }}" method="POST" class="d-flex gap-2">
+                                    @csrf
+                                    <input class="form-control form-control-sm" name="emplacement" placeholder="ex: Local technique" required>
+                                    <input type="number" min="0" class="form-control form-control-sm" style="max-width:90px" name="quantite" placeholder="Qté" required>
+                                    <button class="btn btn-sm btn-sf-primary text-nowrap">Ajouter</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal historique du prix d'achat -->
+                <div class="modal fade" id="historiqueModal{{ $p->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Historique du prix — {{ $p->nom }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <div class="modal-body">
+                                <table class="table sf-table sf-table-compact mb-0">
+                                    <thead><tr><th>Date</th><th>Prix d'achat</th><th>Variation</th></tr></thead>
+                                    <tbody>
+                                        @foreach($p->prixAchatHistorique as $i => $h)
+                                            <tr>
+                                                <td style="font-family:monospace">{{ \Carbon\Carbon::parse($h->date_changement)->format('d/m/Y') }}</td>
+                                                <td>{{ number_format($h->prix_achat, 2) }} MAD</td>
+                                                <td>
+                                                    @if(isset($p->prixAchatHistorique[$i + 1]))
+                                                        @php $delta = $h->prix_achat - $p->prixAchatHistorique[$i + 1]->prix_achat; @endphp
+                                                        <span class="{{ $delta > 0 ? 'text-danger' : ($delta < 0 ? 'text-success' : 'text-muted') }}">
+                                                            {{ $delta > 0 ? '+' : '' }}{{ number_format($delta, 2) }}
+                                                        </span>
+                                                    @else
+                                                        <span class="text-muted">—</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal code QR -->
+                <div class="modal fade" id="qrModal{{ $p->id }}" tabindex="-1">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content text-center">
+                            <div class="modal-header"><h5 class="modal-title">{{ $p->reference }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <div class="modal-body">
+                                <canvas class="sf-qr-canvas" data-ref="{{ $p->reference }}"></canvas>
+                                <p class="text-muted small mt-2 mb-0">{{ $p->nom }}</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-sm btn-sf-outline" onclick="window.print()">
+                                    <i class="bi bi-printer me-1"></i> Imprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="modal fade" id="editModal{{ $p->id }}" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -245,6 +351,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
 function majReferenceAuto() {
     const select = document.getElementById('createCategorySelect');
@@ -252,5 +359,15 @@ function majReferenceAuto() {
     const option = select.options[select.selectedIndex];
     display.value = option ? (option.getAttribute('data-next-ref') || '') : '';
 }
+
+// On génère le QR seulement à l'ouverture de son modal (le canvas n'est pas
+// mesurable tant que le modal est caché), pas à 300 exemplaires au chargement de la page.
+document.addEventListener('shown.bs.modal', function (event) {
+    const canvas = event.target.querySelector('.sf-qr-canvas');
+    if (canvas && !canvas.dataset.rendered) {
+        QRCode.toCanvas(canvas, canvas.dataset.ref, { width: 180, margin: 1 });
+        canvas.dataset.rendered = '1';
+    }
+});
 </script>
 @endsection

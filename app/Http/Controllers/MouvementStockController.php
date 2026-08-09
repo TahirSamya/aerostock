@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AlerteRuptureCritique;
 use App\Models\MouvementStock;
 use App\Models\Produit;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class MouvementStockController extends Controller
 {
@@ -56,6 +60,7 @@ class MouvementStockController extends Controller
                     $produit->increment('quantite', $data['quantite']);
                 } else {
                     $produit->decrement('quantite', $data['quantite']);
+                    $this->notifierSiRuptureCritique($produit);
                 }
             });
         } catch (\Exception $e) {
@@ -113,9 +118,34 @@ class MouvementStockController extends Controller
             ]);
 
             $produit->update(['quantite' => $nouvelleQuantite]);
+            $this->notifierSiRuptureCritique($produit);
         });
 
         return back()->with('success', 'Stock ajusté avec succès.');
+    }
+
+    /**
+     * Envoie un email aux administrateurs si un article marqué "critique" vient
+     * d'atteindre un stock de 0. N'interrompt jamais le mouvement en cas d'échec d'envoi
+     * (ex: serveur SMTP non configuré) — l'erreur est seulement journalisée.
+     */
+    private function notifierSiRuptureCritique(Produit $produit): void
+    {
+        if ($produit->criticite !== 'critique' || $produit->quantite > 0) {
+            return;
+        }
+
+        $destinataires = User::where('role', 'admin')->pluck('email');
+
+        if ($destinataires->isEmpty()) {
+            return;
+        }
+
+        try {
+            Mail::to($destinataires)->send(new AlerteRuptureCritique($produit->fresh(['category', 'fournisseur'])));
+        } catch (\Throwable $e) {
+            Log::warning('Échec envoi email rupture critique (produit #' . $produit->id . ') : ' . $e->getMessage());
+        }
     }
 
     /**

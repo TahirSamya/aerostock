@@ -27,6 +27,33 @@ class Produit extends Model
         return $this->hasMany(MouvementStock::class);
     }
 
+    public function emplacements()
+    {
+        return $this->hasMany(StockEmplacement::class);
+    }
+
+    public function prixAchatHistorique()
+    {
+        return $this->hasMany(PrixAchatHistorique::class)->orderByDesc('date_changement')->orderByDesc('id');
+    }
+
+    /**
+     * Quantité déjà répartie dans un emplacement précis (somme de stock_emplacements).
+     */
+    public function quantiteAffectee(): int
+    {
+        return $this->emplacements->sum('quantite');
+    }
+
+    /**
+     * Quantité qui n'est pas encore répartie dans un emplacement précis.
+     * Ne doit jamais être négatif côté métier — si ça arrive, la répartition dépasse le stock réel.
+     */
+    public function quantiteNonAffectee(): int
+    {
+        return max($this->quantite - $this->quantiteAffectee(), 0);
+    }
+
     public function enAlerte(): bool
     {
         return $this->quantite <= $this->seuil_alerte;

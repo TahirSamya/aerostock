@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Fournisseur;
+use App\Models\PrixAchatHistorique;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ class ProduitController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Produit::with(['category', 'fournisseur']);
+        $query = Produit::with(['category', 'fournisseur', 'emplacements', 'prixAchatHistorique']);
 
         if ($request->filled('search')) {
             $s = $request->search;
@@ -65,7 +66,15 @@ class ProduitController extends Controller
             $category = Category::whereKey($data['category_id'])->lockForUpdate()->firstOrFail();
             $data['reference'] = $this->nextReference($category);
 
-            return Produit::create($data);
+            $produit = Produit::create($data);
+
+            PrixAchatHistorique::create([
+                'produit_id' => $produit->id,
+                'prix_achat' => $produit->prix_achat,
+                'date_changement' => now()->toDateString(),
+            ]);
+
+            return $produit;
         });
 
         return back()->with('success', "Produit ajouté avec succès (référence {$produit->reference}).");
@@ -87,6 +96,14 @@ class ProduitController extends Controller
         // La quantité ne se modifie pas ici : uniquement via les mouvements de stock.
         // La référence non plus : elle est figée dès la création de l'article.
 
+        if (bccomp((string) $data['prix_achat'], (string) $produit->prix_achat, 2) !== 0) {
+            PrixAchatHistorique::create([
+                'produit_id' => $produit->id,
+                'prix_achat' => $data['prix_achat'],
+                'date_changement' => now()->toDateString(),
+            ]);
+        }
+
         $produit->update($data);
 
         return back()->with('success', 'Produit modifié avec succès.');
@@ -97,6 +114,25 @@ class ProduitController extends Controller
         $produit->delete();
 
         return back()->with('success', 'Produit supprimé.');
+    }
+
+    /**
+     * Exporte l'inventaire complet en PDF (document imprimable).
+     */
+    public function exportPdf()
+    {
+        $produits = Produit::with(['category', 'fournisseur'])
+            ->join('categories', 'categories.id', '=', 'produits.category_id')
+            ->orderBy('categories.nom')->orderBy('produits.reference')
+            ->select('produits.*')
+            ->get();
+
+        $valeurTotale = $produits->sum(fn (Produit $p) => $p->quantite * $p->prix_achat);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('produits.pdf-inventaire', compact('produits', 'valeurTotale'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('inventaire_' . now()->format('Y-m-d') . '.pdf');
     }
 
     /**
