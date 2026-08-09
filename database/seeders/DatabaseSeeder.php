@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         // --- Utilisateurs ---
         $admin = User::create([
-            'name' => 'Tahir',
-            'email' => 'admin@aerostock.ma',
+            'name' => 'Amine Rachidi',
+            'email' => 'admin@onda-stock.ma',
             'password' => bcrypt('password'),
             'role' => 'admin',
         ]);
@@ -105,7 +105,7 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $admin->id,
                 'type' => 'entree',
                 'quantite' => $produit->quantite,
-                'motif' => 'Stock initial',
+                'motif' => '[Démo] Stock initial',
                 'date_mouvement' => now()->subDays(rand(3, 12))->toDateString(),
             ]);
         }
@@ -118,7 +118,7 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $admin->id,
                 'type' => 'sortie',
                 'quantite' => rand(1, 3),
-                'motif' => 'Distribution aux services',
+                'motif' => '[Démo] Distribution aux services',
                 'date_mouvement' => now()->subDays(rand(0, 5))->toDateString(),
             ]);
         }
@@ -135,7 +135,7 @@ class DatabaseSeeder extends Seeder
                 'statut' => 'en_attente',
                 'prix_unitaire' => 450,
                 'date_commande' => now()->subDays(2)->toDateString(),
-                'notes' => 'Réapprovisionnement suite à alerte stock bas',
+                'notes' => '[Démo] Réapprovisionnement suite à alerte stock bas',
             ]);
         }
     }
