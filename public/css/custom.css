@@ -126,6 +126,42 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Inter', -apple-system, sans-serif; letter
 .sf-table tbody tr:hover { background: #FAFBFD; }
 .sf-table-compact th, .sf-table-compact td { padding: 7px 12px; font-size: 12.5px; }
 
+/* Zone de défilement du tableau : en-tête fixe (sticky) + scroll vertical/horizontal
+   pour que l'utilisateur puisse voir toutes les lignes sans casser la mise en page. */
+.sf-table-scroll {
+  max-height: 62vh;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+.sf-table-scroll table { margin-bottom: 0; }
+.sf-table-scroll thead th {
+  position: sticky; top: 0; z-index: 3;
+  box-shadow: 0 1px 0 var(--border);
+}
+/* Scrollbar plus fine et discrète (Chrome/Edge/Safari) */
+.sf-table-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.sf-table-scroll::-webkit-scrollbar-track { background: transparent; }
+.sf-table-scroll::-webkit-scrollbar-thumb { background: #D3D8E0; border-radius: 100px; }
+.sf-table-scroll::-webkit-scrollbar-thumb:hover { background: #B7BFCC; }
+.sf-table-scroll { scrollbar-width: thin; scrollbar-color: #D3D8E0 transparent; }
+
+/* ================= Pagination ================= */
+.sf-pagination {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  margin-top: 14px;
+}
+.sf-pagination-summary { font-size: 12.5px; color: var(--ink-soft); }
+.sf-pagination-nav { display: flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.sf-page-item { display: flex; }
+.sf-page-link {
+  display: flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px;
+  border-radius: 8px; border: 1px solid var(--border); background: var(--paper-raised); color: var(--ink);
+  font-size: 12.5px; font-weight: 600; text-decoration: none; transition: background .12s, border-color .12s;
+}
+.sf-page-item a.sf-page-link:hover { background: var(--sky-soft); border-color: #C9DEF3; color: var(--sky); }
+.sf-page-item.active .sf-page-link { background: var(--ink); border-color: var(--ink); color: #fff; }
+.sf-page-item.disabled .sf-page-link { color: #C7CDD6; cursor: default; }
+
 /* Empty state */
 .sf-empty { padding: 34px 16px; text-align: center; color: var(--ink-soft); }
 .sf-empty i { font-size: 26px; color: #C7CDD6; display: block; margin-bottom: 8px; }

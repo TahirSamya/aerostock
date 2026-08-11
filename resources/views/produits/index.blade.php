@@ -27,76 +27,78 @@
 </form>
 
 <div class="sf-panel">
-    <table class="table sf-table mb-0">
-        <thead>
-            <tr>
-                <th>Article</th><th>Référence</th><th>Catégorie</th><th>Emplacement</th>
-                <th>Criticité</th><th>Stock</th><th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @php $categoriePrecedente = null; @endphp
-            @forelse($produits as $p)
-                @if($categoriePrecedente !== $p->category_id)
-                    @php $categoriePrecedente = $p->category_id; @endphp
-                    <tr class="sf-group-row">
-                        <td colspan="8">
-                            <span class="sf-badge sf-badge-sky" style="font-family:monospace">{{ $p->category->code }}</span>
-                            <span class="fw-semibold ms-1">{{ $p->category->nom }}</span>
+    <div class="sf-table-scroll">
+        <table class="table sf-table mb-0">
+            <thead>
+                <tr>
+                    <th>Article</th><th>Référence</th><th>Catégorie</th><th>Emplacement</th>
+                    <th>Criticité</th><th>Stock</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @php $categoriePrecedente = null; @endphp
+                @forelse($produits as $p)
+                    @if($categoriePrecedente !== $p->category_id)
+                        @php $categoriePrecedente = $p->category_id; @endphp
+                        <tr class="sf-group-row">
+                            <td colspan="8">
+                                <span class="sf-badge sf-badge-sky" style="font-family:monospace">{{ $p->category->code }}</span>
+                                <span class="fw-semibold ms-1">{{ $p->category->nom }}</span>
+                            </td>
+                        </tr>
+                    @endif
+                    <tr>
+                        <td class="fw-semibold">{{ $p->nom }}</td>
+                        <td style="font-family:monospace">{{ $p->reference }}</td>
+                        <td>{{ $p->category->nom }}</td>
+                        <td>{{ $p->emplacement ?? '—' }}</td>
+                        <td>
+                            <span class="sf-badge {{ $p->criticite === 'critique' ? 'sf-crit-critique' : 'sf-crit-normal' }}"
+                                  title="{{ $p->criticite === 'critique' ? 'Rupture = impact direct sur une opération importante' : 'Consommable courant, rupture non bloquante' }}">
+                                {{ ucfirst($p->criticite) }}
+                            </span>
+                        </td>
+                        <td>
+                            @php
+                                $ratio = $p->tauxRemplissage();
+                                $urgence = $p->niveauUrgence();
+                                $color = match($urgence) {
+                                    'rupture', 'critique' => '#B5442E',
+                                    'bas' => '#C87F0A',
+                                    default => '#1F6F5C',
+                                };
+                            @endphp
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="sf-gauge-track" title="{{ $p->quantite }} / {{ $p->capaciteReference() }} (capacité cible)">
+                                    <div class="sf-gauge-fill" style="width:{{ max($ratio*100,4) }}%;background:{{ $color }}"></div>
+                                </div>
+                                <span style="font-family:monospace;font-size:12px">{{ $p->quantite }}/{{ $p->capaciteReference() }}</span>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#emplacementsModal{{ $p->id }}" title="Répartition par emplacement">
+                                <i class="bi bi-geo-alt"></i>
+                            </button>
+                            <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#editModal{{ $p->id }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            @if(auth()->user()->isAdmin())
+                                <form action="{{ route('produits.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cet article ?')">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
-                @endif
-                <tr>
-                    <td class="fw-semibold">{{ $p->nom }}</td>
-                    <td style="font-family:monospace">{{ $p->reference }}</td>
-                    <td>{{ $p->category->nom }}</td>
-                    <td>{{ $p->emplacement ?? '—' }}</td>
-                    <td>
-                        <span class="sf-badge {{ $p->criticite === 'critique' ? 'sf-crit-critique' : 'sf-crit-normal' }}"
-                              title="{{ $p->criticite === 'critique' ? 'Rupture = impact direct sur une opération importante' : 'Consommable courant, rupture non bloquante' }}">
-                            {{ ucfirst($p->criticite) }}
-                        </span>
-                    </td>
-                    <td>
-                        @php
-                            $ratio = $p->tauxRemplissage();
-                            $urgence = $p->niveauUrgence();
-                            $color = match($urgence) {
-                                'rupture', 'critique' => '#B5442E',
-                                'bas' => '#C87F0A',
-                                default => '#1F6F5C',
-                            };
-                        @endphp
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="sf-gauge-track" title="{{ $p->quantite }} / {{ $p->capaciteReference() }} (capacité cible)">
-                                <div class="sf-gauge-fill" style="width:{{ max($ratio*100,4) }}%;background:{{ $color }}"></div>
-                            </div>
-                            <span style="font-family:monospace;font-size:12px">{{ $p->quantite }}/{{ $p->capaciteReference() }}</span>
-                        </div>
-                    </td>
-                    <td class="text-end">
-                        <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#emplacementsModal{{ $p->id }}" title="Répartition par emplacement">
-                            <i class="bi bi-geo-alt"></i>
-                        </button>
-                        <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#editModal{{ $p->id }}">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        @if(auth()->user()->isAdmin())
-                            <form action="{{ route('produits.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cet article ?')">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr><td colspan="8"><div class="sf-empty"><i class="bi bi-box-seam"></i><span>Aucun article trouvé</span></div></td></tr>
-            @endforelse
-        </tbody>
-    </table>
+                @empty
+                    <tr><td colspan="8"><div class="sf-empty"><i class="bi bi-box-seam"></i><span>Aucun article trouvé</span></div></td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="mt-3">{{ $produits->links() }}</div>
+@include('partials.pagination', ['paginator' => $produits])
 
 {{-- Modales par article : placées hors du tableau (un <div> ne peut pas être
      enfant direct d'un <tbody>, sinon le navigateur le sort du tableau et

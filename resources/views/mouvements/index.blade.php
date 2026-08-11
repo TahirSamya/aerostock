@@ -15,9 +15,8 @@
             <i class="bi bi-sliders me-1"></i> Ajustement manuel
         </button>
     @endif
-    <!-- <a href="{{ route('mouvements.export.csv') }}" class="btn btn-sf-outline">
-        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Exporter (Excel)
-    </a> -->
+   
+    
         <a href="{{ route('mouvements.export.xlsx') }}" class="btn btn-sf-outline">
             <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
         </a>
@@ -42,57 +41,59 @@
 </form>
 
 <div class="sf-panel">
-    <table class="table sf-table mb-0">
-        <thead><tr><th>Date</th><th>Article</th><th>Type</th><th>Détail</th><th>Motif</th><th>Agent</th><th></th></tr></thead>
-        <tbody>
-            @forelse($mouvements as $m)
-                <tr>
-                    <td style="font-family:monospace">{{ $m->date_mouvement }}</td>
-                    <td>
-                        {{ $m->produit->nom }}
-                        <div class="text-muted" style="font-family:monospace;font-size:11px">{{ $m->produit->reference }}</div>
-                    </td>
-                    <td>
-                        @if($m->type === 'entree')
-                            <span class="sf-badge sf-badge-teal">▲ Entrée</span>
-                        @elseif($m->type === 'sortie')
-                            <span class="sf-badge sf-badge-rust">▼ Sortie</span>
-                        @else
-                            <span class="sf-badge sf-badge-amber">⚙ Ajustement</span>
-                        @endif
-                    </td>
-                    <td style="font-family:monospace">
-                        @if($m->type === 'entree')
-                            <span class="text-success fw-semibold">+{{ $m->quantite }}</span>
-                        @elseif($m->type === 'sortie')
-                            <span class="text-danger fw-semibold">-{{ $m->quantite }}</span>
-                        @else
-                            {{ $m->ancienne_quantite }} → {{ $m->nouvelle_quantite }}
-                            <span class="text-muted">({{ $m->nouvelle_quantite >= $m->ancienne_quantite ? '+' : '' }}{{ $m->nouvelle_quantite - $m->ancienne_quantite }})</span>
-                        @endif
-                    </td>
-                    <td class="text-muted">{{ $m->motif ?? '—' }}</td>
-                    <td>{{ $m->user->name ?? '—' }}</td>
-                    <td class="text-end">
-                        <a href="{{ route('mouvements.export.pdf', $m) }}" target="_blank" class="btn btn-sm btn-sf-outline me-1">
-                            <i class="bi bi-file-earmark-pdf"></i>
-                        </a>
-                        @if(auth()->user()->isAdmin())
-                            <form action="{{ route('mouvements.destroy', $m) }}" method="POST" class="d-inline" onsubmit="return confirm('Annuler ce mouvement ? Le stock sera restauré.')">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-sm btn-outline-danger">Annuler</button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr><td colspan="7"><div class="sf-empty"><i class="bi bi-arrow-left-right"></i><span>Aucun mouvement enregistré</span></div></td></tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="sf-table-scroll">
+        <table class="table sf-table mb-0">
+            <thead><tr><th>Date</th><th>Article</th><th>Type</th><th>Détail</th><th>Motif</th><th>Agent</th><th></th></tr></thead>
+            <tbody>
+                @forelse($mouvements as $m)
+                    <tr>
+                        <td style="font-family:monospace">{{ $m->date_mouvement }}</td>
+                        <td>
+                            {{ $m->produit->nom }}
+                            <div class="text-muted" style="font-family:monospace;font-size:11px">{{ $m->produit->reference }}</div>
+                        </td>
+                        <td>
+                            @if($m->type === 'entree')
+                                <span class="sf-badge sf-badge-teal">▲ Entrée</span>
+                            @elseif($m->type === 'sortie')
+                                <span class="sf-badge sf-badge-rust">▼ Sortie</span>
+                            @else
+                                <span class="sf-badge sf-badge-amber">⚙ Ajustement</span>
+                            @endif
+                        </td>
+                        <td style="font-family:monospace">
+                            @if($m->type === 'entree')
+                                <span class="text-success fw-semibold">+{{ $m->quantite }}</span>
+                            @elseif($m->type === 'sortie')
+                                <span class="text-danger fw-semibold">-{{ $m->quantite }}</span>
+                            @else
+                                {{ $m->ancienne_quantite }} → {{ $m->nouvelle_quantite }}
+                                <span class="text-muted">({{ $m->nouvelle_quantite >= $m->ancienne_quantite ? '+' : '' }}{{ $m->nouvelle_quantite - $m->ancienne_quantite }})</span>
+                            @endif
+                        </td>
+                        <td class="text-muted">{{ $m->motif ?? '—' }}</td>
+                        <td>{{ $m->user->name ?? '—' }}</td>
+                        <td class="text-end">
+                            <a href="{{ route('mouvements.export.pdf', $m) }}" target="_blank" class="btn btn-sm btn-sf-outline me-1">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </a>
+                            @if(auth()->user()->isAdmin())
+                                <form action="{{ route('mouvements.destroy', $m) }}" method="POST" class="d-inline" onsubmit="return confirm('Annuler ce mouvement ? Le stock sera restauré.')">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger">Annuler</button>
+                                </form>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="7"><div class="sf-empty"><i class="bi bi-arrow-left-right"></i><span>Aucun mouvement enregistré</span></div></td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="mt-3">{{ $mouvements->links() }}</div>
+@include('partials.pagination', ['paginator' => $mouvements])
 
 <div class="modal fade" id="mvtModal" tabindex="-1">
     <div class="modal-dialog">
