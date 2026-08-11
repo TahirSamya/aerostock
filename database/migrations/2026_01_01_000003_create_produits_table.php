@@ -17,7 +17,6 @@ return new class extends Migration
             $table->integer('quantite')->default(0);
             $table->integer('seuil_alerte')->default(5);
             $table->decimal('prix_achat', 10, 2)->default(0);
-            $table->decimal('prix_vente', 10, 2)->default(0);
             $table->string('emplacement')->nullable()->comment('Hangar, zone piste, magasin technique...');
             $table->enum('criticite', ['normal', 'critique'])->default('normal')
                 ->comment('Critique = pièce impactant directement la sécurité/disponibilité opérationnelle');

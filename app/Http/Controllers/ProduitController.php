@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Fournisseur;
-use App\Models\PrixAchatHistorique;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +12,7 @@ class ProduitController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Produit::with(['category', 'fournisseur', 'emplacements', 'prixAchatHistorique']);
+        $query = Produit::with(['category', 'fournisseur', 'emplacements']);
 
         if ($request->filled('search')) {
             $s = $request->search;
@@ -54,7 +53,6 @@ class ProduitController extends Controller
             'seuil_alerte' => 'required|integer|min:0',
             'quantite_max' => 'nullable|integer|min:0',
             'prix_achat' => 'required|numeric|min:0',
-            'prix_vente' => 'required|numeric|min:0',
             'emplacement' => 'nullable|string|max:255',
             'criticite' => 'required|in:normal,critique',
         ]);
@@ -66,15 +64,7 @@ class ProduitController extends Controller
             $category = Category::whereKey($data['category_id'])->lockForUpdate()->firstOrFail();
             $data['reference'] = $this->nextReference($category);
 
-            $produit = Produit::create($data);
-
-            PrixAchatHistorique::create([
-                'produit_id' => $produit->id,
-                'prix_achat' => $produit->prix_achat,
-                'date_changement' => now()->toDateString(),
-            ]);
-
-            return $produit;
+            return Produit::create($data);
         });
 
         return back()->with('success', "Produit ajouté avec succès (référence {$produit->reference}).");
@@ -89,21 +79,11 @@ class ProduitController extends Controller
             'seuil_alerte' => 'required|integer|min:0',
             'quantite_max' => 'nullable|integer|min:0',
             'prix_achat' => 'required|numeric|min:0',
-            'prix_vente' => 'required|numeric|min:0',
             'emplacement' => 'nullable|string|max:255',
             'criticite' => 'required|in:normal,critique',
         ]);
         // La quantité ne se modifie pas ici : uniquement via les mouvements de stock.
         // La référence non plus : elle est figée dès la création de l'article.
-
-        if (bccomp((string) $data['prix_achat'], (string) $produit->prix_achat, 2) !== 0) {
-            PrixAchatHistorique::create([
-                'produit_id' => $produit->id,
-                'prix_achat' => $data['prix_achat'],
-                'date_changement' => now()->toDateString(),
-            ]);
-        }
-
         $produit->update($data);
 
         return back()->with('success', 'Produit modifié avec succès.');
@@ -164,36 +144,39 @@ class ProduitController extends Controller
     {
         $produits = Produit::with(['category', 'fournisseur'])->orderBy('nom')->get();
 
-        $callback = function () use ($produits) {
-            $handle = fopen('php://output', 'w');
-            fwrite($handle, "\xEF\xBB\xBF");
-            // Force Excel à utiliser la virgule comme séparateur, quelle que soit la config
-            // régionale de l'ordinateur (sans cette ligne, Excel FR/MA — qui utilise la virgule
-            // comme séparateur décimal — n'arrive pas à séparer les colonnes automatiquement).
-            fwrite($handle, "sep=,\r\n");
-            fputcsv($handle, ['Nom', 'Référence', 'Catégorie', 'Fournisseur', 'Emplacement', 'Criticité', 'Quantité', 'Seuil alerte', 'Stock max', 'Prix achat', 'Prix vente']);
+        // On construit le CSV entièrement en mémoire puis on l'envoie en une seule fois,
+        // plutôt que de le "streamer" ligne par ligne : avec response()->stream() sur
+        // certaines configs XAMPP/Windows, le BOM UTF-8 arrivait corrompu et Excel
+        // affichait les accents comme des caractères bizarres (Ã©, Ã¨...).
+        $handle = fopen('php://temp', 'r+');
+        fputcsv($handle, ['Nom', 'Référence', 'Catégorie', 'Fournisseur', 'Emplacement', 'Criticité', 'Quantité', 'Seuil alerte', 'Stock max', 'Prix achat']);
 
-            foreach ($produits as $p) {
-                fputcsv($handle, [
-                    $p->nom,
-                    $p->reference,
-                    $p->category->nom ?? '',
-                    $p->fournisseur->nom ?? '',
-                    $p->emplacement ?? '',
-                    $p->criticite,
-                    $p->quantite,
-                    $p->seuil_alerte,
-                    $p->quantite_max,
-                    $p->prix_achat,
-                    $p->prix_vente,
-                ]);
-            }
-            fclose($handle);
-        };
+        foreach ($produits as $p) {
+            fputcsv($handle, [
+                $p->nom,
+                $p->reference,
+                $p->category->nom ?? '',
+                $p->fournisseur->nom ?? '',
+                $p->emplacement ?? '',
+                ucfirst($p->criticite),
+                $p->quantite,
+                $p->seuil_alerte,
+                $p->quantite_max,
+                $p->prix_achat,
+            ]);
+        }
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
 
-        return response()->stream($callback, 200, [
+        // BOM UTF-8 + "sep=," : indique explicitement à Excel l'encodage et le séparateur,
+        // quelle que soit la configuration régionale de l'ordinateur.
+        $content = "\xEF\xBB\xBF" . "sep=,\r\n" . $csv;
+
+        return response($content, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="inventaire_' . now()->format('Y-m-d') . '.csv"',
+            'Content-Length' => strlen($content),
         ]);
     }
 }

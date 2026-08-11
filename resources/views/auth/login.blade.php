@@ -35,6 +35,7 @@
             </div>
             <button type="submit" class="btn btn-sf-primary w-100">Se connecter</button>
         </form>
+        <p class="text-center text-muted small mt-3 mb-0">Démo : admin@aerostock.ma / password</p>
     </div>
 </div>
 </body>

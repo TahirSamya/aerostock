@@ -2,7 +2,7 @@
 @section('title', 'Utilisateurs')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Utilisateurs</h2>
         <p class="text-muted mb-0">{{ $users->count() }} compte(s) — réservé aux administrateurs</p>

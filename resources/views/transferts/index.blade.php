@@ -2,7 +2,7 @@
 @section('title', 'Transferts')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Transferts entre emplacements</h2>
         <p class="text-muted mb-0">Déplacer du stock d'un emplacement à un autre (magasin, bureau, local technique...)</p>
@@ -26,7 +26,7 @@
                     <td>{{ $t->user->name ?? '—' }}</td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="text-center text-muted py-4">Aucun transfert enregistré</td></tr>
+                <tr><td colspan="6"><div class="sf-empty"><i class="bi bi-signpost-split"></i><span>Aucun transfert enregistré</span></div></td></tr>
             @endforelse
         </tbody>
     </table>
@@ -60,10 +60,6 @@
                         <label class="form-label small fw-semibold">Quantité à transférer</label>
                         <input type="number" min="1" class="form-control" name="quantite" required>
                     </div>
-                    <p class="text-muted small mb-0">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Si tu transfères la totalité du stock, l'emplacement du produit est mis à jour automatiquement.
-                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sf-outline" data-bs-dismiss="modal">Annuler</button>

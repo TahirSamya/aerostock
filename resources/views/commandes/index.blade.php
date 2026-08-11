@@ -2,7 +2,7 @@
 @section('title', 'Commandes fournisseurs')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Commandes fournisseurs</h2>
         <p class="text-muted mb-0">Suivi des achats, de la commande à la réception</p>
@@ -78,7 +78,7 @@
                 </div>
                 @endif
             @empty
-                <tr><td colspan="8" class="text-center text-muted py-4">Aucune commande</td></tr>
+                <tr><td colspan="8"><div class="sf-empty"><i class="bi bi-cart-check"></i><span>Aucune commande</span></div></td></tr>
             @endforelse
         </tbody>
     </table>

@@ -8,7 +8,7 @@ class Produit extends Model
 {
     protected $fillable = [
         'nom', 'reference', 'category_id', 'fournisseur_id',
-        'quantite', 'seuil_alerte', 'quantite_max', 'prix_achat', 'prix_vente',
+        'quantite', 'seuil_alerte', 'quantite_max', 'prix_achat',
         'emplacement', 'criticite',
     ];
 
@@ -30,11 +30,6 @@ class Produit extends Model
     public function emplacements()
     {
         return $this->hasMany(StockEmplacement::class);
-    }
-
-    public function prixAchatHistorique()
-    {
-        return $this->hasMany(PrixAchatHistorique::class)->orderByDesc('date_changement')->orderByDesc('id');
     }
 
     /**

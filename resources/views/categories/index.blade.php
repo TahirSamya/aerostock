@@ -2,7 +2,7 @@
 @section('title', 'Catégories')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Catégories</h2>
         <p class="text-muted mb-0">{{ $categories->count() }} catégorie(s)</p>
@@ -32,7 +32,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="text-center text-muted py-4">Aucune catégorie</td></tr>
+                <tr><td colspan="5"><div class="sf-empty"><i class="bi bi-tags"></i><span>Aucune catégorie</span></div></td></tr>
             @endforelse
         </tbody>
     </table>
@@ -51,7 +51,6 @@
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Code (préfixe de référence)</label>
                         <input class="form-control" name="code" required maxlength="10" style="text-transform:uppercase" placeholder="ex: BUR">
-                        <div class="form-text">Sert à générer automatiquement la référence des articles de cette catégorie (ex: BUR-001, BUR-002...). Lettres uniquement, non modifiable ensuite.</div>
                     </div>
                     <div class="mb-2"><label class="form-label small fw-semibold">Description</label>
                         <input class="form-control" name="description"></div>

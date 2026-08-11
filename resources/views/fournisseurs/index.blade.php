@@ -2,7 +2,7 @@
 @section('title', 'Fournisseurs')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Fournisseurs</h2>
         <p class="text-muted mb-0">{{ $fournisseurs->count() }} fournisseur(s)</p>
@@ -32,7 +32,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="text-center text-muted py-4">Aucun fournisseur</td></tr>
+                <tr><td colspan="5"><div class="sf-empty"><i class="bi bi-truck"></i><span>Aucun fournisseur</span></div></td></tr>
             @endforelse
         </tbody>
     </table>

@@ -169,31 +169,31 @@ class MouvementStockController extends Controller
             ->latest('date_mouvement')
             ->get();
 
-        $callback = function () use ($mouvements) {
-            $handle = fopen('php://output', 'w');
-            // BOM UTF-8 pour qu'Excel affiche correctement les accents
-            fwrite($handle, "\xEF\xBB\xBF");
-            // Force Excel à utiliser la virgule comme séparateur (voir ProduitController::exportCsv)
-            fwrite($handle, "sep=,\r\n");
-            fputcsv($handle, ['Date', 'Article', 'Référence', 'Type', 'Quantité', 'Motif', 'Agent']);
+        // Construction en mémoire (voir ProduitController::exportCsv pour le pourquoi).
+        $handle = fopen('php://temp', 'r+');
+        fputcsv($handle, ['Date', 'Article', 'Référence', 'Type', 'Quantité', 'Motif', 'Agent']);
 
-            foreach ($mouvements as $m) {
-                fputcsv($handle, [
-                    $m->date_mouvement,
-                    $m->produit->nom,
-                    $m->produit->reference,
-                    $m->type === 'entree' ? 'Entrée' : 'Sortie',
-                    $m->quantite,
-                    $m->motif ?? '',
-                    $m->user->name ?? '',
-                ]);
-            }
-            fclose($handle);
-        };
+        foreach ($mouvements as $m) {
+            fputcsv($handle, [
+                $m->date_mouvement,
+                $m->produit->nom,
+                $m->produit->reference,
+                $m->type === 'entree' ? 'Entrée' : 'Sortie',
+                $m->quantite,
+                $m->motif ?? '',
+                $m->user->name ?? '',
+            ]);
+        }
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
 
-        return response()->stream($callback, 200, [
+        $content = "\xEF\xBB\xBF" . "sep=,\r\n" . $csv;
+
+        return response($content, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="mouvements_stock_' . now()->format('Y-m-d') . '.csv"',
+            'Content-Length' => strlen($content),
         ]);
     }
 }

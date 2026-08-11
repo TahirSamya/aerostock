@@ -18,12 +18,15 @@
     <div class="sf-brand-sub">ONDA — Gestion de stock</div>
 
     <nav class="flex-grow-1">
+        <div class="sf-nav-group-label">Pilotage</div>
         <a href="{{ route('dashboard') }}" class="sf-nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <i class="bi bi-speedometer2"></i><span>Tableau de bord</span>
-            @if(($alertesCount ?? 0) > 0)
-                <span class="badge rounded-pill bg-danger ms-auto">{{ $alertesCount }}</span>
-            @endif
         </a>
+        <a href="{{ route('statistiques.index') }}" class="sf-nav-link {{ request()->routeIs('statistiques.*') ? 'active' : '' }}">
+            <i class="bi bi-graph-up"></i><span>Statistiques</span>
+        </a>
+
+        <div class="sf-nav-group-label">Stock</div>
         <a href="{{ route('produits.index') }}" class="sf-nav-link {{ request()->routeIs('produits.*') ? 'active' : '' }}">
             <i class="bi bi-box-seam"></i><span>Pièces &amp; équipements</span>
         </a>
@@ -33,17 +36,18 @@
         <a href="{{ route('transferts.index') }}" class="sf-nav-link {{ request()->routeIs('transferts.*') ? 'active' : '' }}">
             <i class="bi bi-signpost-split"></i><span>Transferts</span>
         </a>
+
+        <div class="sf-nav-group-label">Achats</div>
         <a href="{{ route('commandes.index') }}" class="sf-nav-link {{ request()->routeIs('commandes.*') ? 'active' : '' }}">
             <i class="bi bi-cart-check"></i><span>Commandes</span>
         </a>
-        <a href="{{ route('statistiques.index') }}" class="sf-nav-link {{ request()->routeIs('statistiques.*') ? 'active' : '' }}">
-            <i class="bi bi-graph-up"></i><span>Statistiques</span>
-        </a>
-        <a href="{{ route('categories.index') }}" class="sf-nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-            <i class="bi bi-tags"></i><span>Catégories</span>
-        </a>
         <a href="{{ route('fournisseurs.index') }}" class="sf-nav-link {{ request()->routeIs('fournisseurs.*') ? 'active' : '' }}">
             <i class="bi bi-truck"></i><span>Fournisseurs</span>
+        </a>
+
+        <div class="sf-nav-group-label">Administration</div>
+        <a href="{{ route('categories.index') }}" class="sf-nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+            <i class="bi bi-tags"></i><span>Catégories</span>
         </a>
         @if(auth()->user()->isAdmin())
             <a href="{{ route('users.index') }}" class="sf-nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
@@ -60,23 +64,43 @@
     </div>
     <form method="POST" action="{{ route('logout') }}">
         @csrf
-        <button type="submit" class="btn btn-sf-outline w-100" style="border-color:#2A3A5F; color:#A9B4C9;">
+        <button type="submit" class="btn btn-sf-outline w-100" style="border-color:#2A3A5F; color:#A9B4C9; background:transparent;">
             <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
         </button>
     </form>
 </aside>
 
-<main class="sf-main">
-    @if(($alertesCount ?? 0) > 0 && !request()->routeIs('dashboard'))
-        <div class="alert alert-warning d-flex align-items-center justify-content-between" role="alert">
-            <div>
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                <strong>{{ $alertesCount }}</strong> article(s) sont sous le seuil d'alerte de stock.
-            </div>
-            <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-dark">Voir le détail</a>
-        </div>
-    @endif
+<div class="sf-topbar">
+    <form action="{{ route('produits.index') }}" method="GET" class="sf-topbar-search">
+        <i class="bi bi-search"></i>
+        <input type="text" name="search" placeholder="Rechercher un article, une référence...">
+    </form>
 
+    <div class="ms-auto sf-bell">
+        <button type="button" class="sf-bell-btn" onclick="document.getElementById('sfBellMenu').classList.toggle('show')">
+            <i class="bi bi-bell"></i>
+            @if(($alertesCount ?? 0) > 0)
+                <span class="sf-bell-dot">{{ $alertesCount > 9 ? '9+' : $alertesCount }}</span>
+            @endif
+        </button>
+        <div class="sf-bell-menu" id="sfBellMenu">
+            <div class="sf-bell-menu-head">Articles en alerte</div>
+            @forelse(($alertesTop ?? []) as $p)
+                <a href="{{ route('produits.index') }}" class="sf-bell-item">
+                    <div class="t">{{ $p->nom }}</div>
+                    <div class="s">{{ $p->category->nom ?? '' }} · stock {{ $p->quantite }} / seuil {{ $p->seuil_alerte }}</div>
+                </a>
+            @empty
+                <div class="sf-bell-empty">Aucune alerte en cours.</div>
+            @endforelse
+            @if(($alertesCount ?? 0) > 0)
+                <div class="sf-bell-foot"><a href="{{ route('dashboard') }}">Voir toutes les alertes</a></div>
+            @endif
+        </div>
+    </div>
+</div>
+
+<main class="sf-main">
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -94,6 +118,14 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('click', function (e) {
+    const menu = document.getElementById('sfBellMenu');
+    if (menu && !menu.contains(e.target) && !e.target.closest('.sf-bell-btn')) {
+        menu.classList.remove('show');
+    }
+});
+</script>
 @yield('scripts')
 </body>
 </html>

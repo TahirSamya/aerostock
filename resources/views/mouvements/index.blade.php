@@ -2,7 +2,7 @@
 @section('title', 'Mouvements de stock')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Mouvements de stock</h2>
         <p class="text-muted mb-0">Historique des entrées et sorties</p>
@@ -83,7 +83,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">Aucun mouvement</td></tr>
+                <tr><td colspan="7"><div class="sf-empty"><i class="bi bi-arrow-left-right"></i><span>Aucun mouvement enregistré</span></div></td></tr>
             @endforelse
         </tbody>
     </table>
@@ -143,10 +143,6 @@
                 <div class="modal-header"><h5 class="modal-title">Ajustement manuel de stock</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <p class="text-muted small">
-                        À utiliser après un inventaire physique, pour corriger un écart entre
-                        le stock théorique et le stock réel constaté.
-                    </p>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Article</label>
                         <select class="form-select" name="produit_id" required>

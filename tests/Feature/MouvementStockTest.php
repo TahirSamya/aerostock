@@ -25,7 +25,7 @@ class MouvementStockTest extends TestCase
             'quantite' => $quantite,
             'seuil_alerte' => $seuil,
             'prix_achat' => 10,
-            'prix_vente' => 20,
+            
             'criticite' => 'normal',
         ]);
     }

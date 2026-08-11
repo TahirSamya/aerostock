@@ -2,10 +2,10 @@
 @section('title', 'Tableau de bord')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-2">
+<div class="sf-page-header">
     <div>
-        <h2 class="fw-bold mb-0">Tableau de bord</h2>
-        <p class="text-muted mb-0 small">Vue d'ensemble du stock administratif</p>
+        <h2>Tableau de bord</h2>
+        <p>Vue d'ensemble du stock administratif</p>
     </div>
     <div class="btn-group">
         <a href="{{ route('dashboard', ['periode' => 7]) }}" class="btn btn-sm {{ $periode == 7 ? 'btn-sf-primary' : 'btn-sf-outline' }}">7 jours</a>
@@ -17,26 +17,38 @@
 <div class="row g-2 mb-2">
     <div class="col-md-3">
         <div class="sf-stat-card">
-            <div class="sf-stat-label">Articles référencés</div>
-            <div class="sf-stat-value">{{ $totalProduits }}</div>
+            <div class="sf-stat-icon sky"><i class="bi bi-box-seam"></i></div>
+            <div>
+                <div class="sf-stat-label">Articles référencés</div>
+                <div class="sf-stat-value">{{ $totalProduits }}</div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="sf-stat-card">
-            <div class="sf-stat-label">Alertes stock faible</div>
-            <div class="sf-stat-value {{ $produitsAlerte->count() ? 'danger' : '' }}">{{ $produitsAlerte->count() }}</div>
+            <div class="sf-stat-icon rust"><i class="bi bi-exclamation-triangle"></i></div>
+            <div>
+                <div class="sf-stat-label">Alertes stock faible</div>
+                <div class="sf-stat-value {{ $produitsAlerte->count() ? 'danger' : '' }}">{{ $produitsAlerte->count() }}</div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="sf-stat-card">
-            <div class="sf-stat-label">Valeur du stock</div>
-            <div class="sf-stat-value" style="font-size:19px;">{{ number_format($valeurStock, 0, ',', ' ') }} MAD</div>
+            <div class="sf-stat-icon teal"><i class="bi bi-cash-stack"></i></div>
+            <div>
+                <div class="sf-stat-label">Valeur du stock</div>
+                <div class="sf-stat-value" style="font-size:18px;">{{ number_format($valeurStock, 0, ',', ' ') }} MAD</div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="sf-stat-card">
-            <div class="sf-stat-label">Commandes en attente</div>
-            <div class="sf-stat-value {{ $commandesEnAttente ? 'danger' : '' }}">{{ $commandesEnAttente }}</div>
+            <div class="sf-stat-icon amber"><i class="bi bi-cart-check"></i></div>
+            <div>
+                <div class="sf-stat-label">Commandes en attente</div>
+                <div class="sf-stat-value {{ $commandesEnAttente ? 'danger' : '' }}">{{ $commandesEnAttente }}</div>
+            </div>
         </div>
     </div>
 </div>
@@ -106,7 +118,7 @@
                             <td class="text-end"><a href="{{ route('commandes.index') }}" class="small">Commander →</a></td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="text-center text-muted py-3">Aucune alerte, tous les stocks sont au-dessus du seuil.</td></tr>
+                        <tr><td colspan="5"><div class="sf-empty"><i class="bi bi-check-circle"></i><span>Aucune alerte, tous les stocks sont au-dessus du seuil.</span></div></td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -129,7 +141,7 @@
                             <td>{{ $m->quantite }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="3" class="text-center text-muted py-3">Aucun mouvement</td></tr>
+                        <tr><td colspan="3"><div class="sf-empty"><i class="bi bi-arrow-left-right"></i><span>Aucun mouvement</span></div></td></tr>
                     @endforelse
                 </tbody>
             </table>

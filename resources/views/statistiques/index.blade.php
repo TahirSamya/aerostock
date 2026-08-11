@@ -2,7 +2,7 @@
 @section('title', 'Statistiques')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="sf-page-header">
     <div>
         <h2 class="fw-bold mb-1">Statistiques de consommation</h2>
         <p class="text-muted mb-0">Articles qui sortent le plus vite du stock</p>

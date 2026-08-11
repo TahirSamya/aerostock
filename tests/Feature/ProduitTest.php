@@ -33,7 +33,7 @@ class ProduitTest extends TestCase
             'quantite' => 5,
             'seuil_alerte' => 2,
             'prix_achat' => 100,
-            'prix_vente' => 150,
+            
             'criticite' => 'normal',
         ]);
 
@@ -47,7 +47,7 @@ class ProduitTest extends TestCase
         $category = Category::create(['nom' => 'Électronique']);
         Produit::create([
             'nom' => 'Clavier', 'reference' => 'REF-DOUBLE', 'category_id' => $category->id,
-            'quantite' => 1, 'seuil_alerte' => 1, 'prix_achat' => 1, 'prix_vente' => 1, 'criticite' => 'normal',
+            'quantite' => 1, 'seuil_alerte' => 1, 'prix_achat' => 1, 'criticite' => 'normal',
         ]);
 
         $response = $this->actingAs($user)->post(route('produits.store'), [
@@ -57,7 +57,7 @@ class ProduitTest extends TestCase
             'quantite' => 1,
             'seuil_alerte' => 1,
             'prix_achat' => 1,
-            'prix_vente' => 1,
+            
             'criticite' => 'normal',
         ]);
 
@@ -71,7 +71,7 @@ class ProduitTest extends TestCase
         $category = Category::create(['nom' => 'Test']);
         $produit = Produit::create([
             'nom' => 'Test', 'reference' => 'REF-300', 'category_id' => $category->id,
-            'quantite' => 5, 'seuil_alerte' => 1, 'prix_achat' => 1, 'prix_vente' => 1, 'criticite' => 'normal',
+            'quantite' => 5, 'seuil_alerte' => 1, 'prix_achat' => 1, 'criticite' => 'normal',
         ]);
 
         $this->actingAs($magasinier)->delete(route('produits.destroy', $produit));
