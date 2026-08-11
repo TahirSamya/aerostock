@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : lun. 20 juil. 2026 à 21:46
+-- Généré le : mar. 11 août 2026 à 06:52
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.0.30
 
@@ -65,10 +65,10 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `nom`, `code`, `description`, `created_at`, `updated_at`) VALUES
-(1, 'Fournitures de bureau', 'BUR', 'Papeterie et consommables pour les services administratifs', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(2, 'Matériel informatique', 'INFO', 'Ordinateurs, imprimantes et accessoires informatiques', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(3, 'Équipement de sécurité', 'SEC', 'Matériel de protection individuelle et de sécurité incendie', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(4, 'Produits d\'entretien', 'ENT', 'Produits de nettoyage et d\'hygiène pour les locaux', '2026-07-20 17:48:39', '2026-07-20 17:48:39');
+(1, 'Fournitures de bureau', 'BUR', 'Papeterie et consommables pour les services administratifs', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(2, 'Matériel informatique', 'INFO', 'Ordinateurs, imprimantes et accessoires informatiques', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(3, 'Équipement de sécurité', 'SEC', 'Matériel de protection individuelle et de sécurité incendie', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(4, 'Produits d\'entretien', 'ENT', 'Produits de nettoyage et d\'hygiène pour les locaux', '2026-08-11 03:14:23', '2026-08-11 03:14:23');
 
 -- --------------------------------------------------------
 
@@ -97,7 +97,7 @@ CREATE TABLE `commandes_fournisseurs` (
 --
 
 INSERT INTO `commandes_fournisseurs` (`id`, `fournisseur_id`, `produit_id`, `user_id`, `quantite_commandee`, `quantite_recue`, `statut`, `prix_unitaire`, `date_commande`, `date_reception`, `notes`, `created_at`, `updated_at`) VALUES
-(1, 2, 3, 1, 20, 0, 'en_attente', 450.00, '2026-07-18', NULL, 'Réapprovisionnement suite à alerte stock bas', '2026-07-20 17:48:39', '2026-07-20 17:48:39');
+(1, 2, 3, 1, 20, 20, 'recue', 450.00, '2026-08-09', '2026-08-11', '[Démo] Réapprovisionnement suite à alerte stock bas', '2026-08-11 03:14:23', '2026-08-11 03:16:35');
 
 -- --------------------------------------------------------
 
@@ -136,10 +136,10 @@ CREATE TABLE `fournisseurs` (
 --
 
 INSERT INTO `fournisseurs` (`id`, `nom`, `telephone`, `email`, `adresse`, `created_at`, `updated_at`) VALUES
-(1, 'Bureau Plus Maroc', '05 22 24 56 78', 'contact@bureauplus.ma', '12 Rue Ibnou Sina, Casablanca', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(2, 'InfoTech Solutions', '05 22 33 44 55', 'ventes@infotech-solutions.ma', '45 Boulevard Zerktouni, Casablanca', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(3, 'Proteg Sécurité', '05 22 67 89 10', 'commercial@proteg-securite.ma', '8 Rue Al Massira, Casablanca', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(4, 'Clean Services Maroc', '05 22 11 22 33', 'contact@cleanservices.ma', 'Zone Industrielle, Aïn Sebaâ, Casablanca', '2026-07-20 17:48:39', '2026-07-20 17:48:39');
+(1, 'Bureau Plus Maroc', '05 22 24 56 78', 'contact@bureauplus.ma', '12 Rue Ibnou Sina, Casablanca', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(2, 'InfoTech Solutions', '05 22 33 44 55', 'ventes@infotech-solutions.ma', '45 Boulevard Zerktouni, Casablanca', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(3, 'Proteg Sécurité', '05 22 67 89 10', 'commercial@proteg-securite.ma', '8 Rue Al Massira, Casablanca', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(4, 'Clean Services Maroc', '05 22 11 22 33', 'contact@cleanservices.ma', 'Zone Industrielle, Aïn Sebaâ, Casablanca', '2026-08-11 03:14:23', '2026-08-11 03:14:23');
 
 -- --------------------------------------------------------
 
@@ -205,7 +205,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (10, '2026_01_03_000002_add_ajustement_to_mouvements_stock_table', 1),
 (11, '2026_01_04_000001_create_commandes_fournisseurs_table', 1),
 (12, '2026_01_05_000001_add_code_to_categories_table', 1),
-(13, '2026_01_05_000002_add_quantite_max_to_produits_table', 1);
+(13, '2026_01_05_000002_add_quantite_max_to_produits_table', 1),
+(14, '2026_01_06_000001_create_stock_emplacements_table', 1),
+(15, '2026_01_06_000002_create_prix_achat_historique_table', 1);
 
 -- --------------------------------------------------------
 
@@ -232,20 +234,21 @@ CREATE TABLE `mouvements_stock` (
 --
 
 INSERT INTO `mouvements_stock` (`id`, `produit_id`, `user_id`, `type`, `quantite`, `ancienne_quantite`, `nouvelle_quantite`, `motif`, `date_mouvement`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'entree', 8, NULL, NULL, 'Stock initial', '2026-07-14', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(2, 2, 1, 'entree', 3, NULL, NULL, 'Stock initial', '2026-07-15', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(3, 3, 1, 'entree', 26, NULL, NULL, 'Stock initial', '2026-07-13', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(4, 4, 1, 'entree', 150, NULL, NULL, 'Stock initial', '2026-07-14', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(5, 5, 1, 'entree', 2, NULL, NULL, 'Stock initial', '2026-07-13', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(6, 6, 1, 'entree', 4, NULL, NULL, 'Stock initial', '2026-07-17', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(7, 7, 1, 'entree', 15, NULL, NULL, 'Stock initial', '2026-07-11', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(8, 8, 1, 'entree', 30, NULL, NULL, 'Stock initial', '2026-07-08', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(9, 9, 1, 'entree', 12, NULL, NULL, 'Stock initial', '2026-07-12', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(10, 10, 1, 'entree', 5, NULL, NULL, 'Stock initial', '2026-07-08', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(11, 3, 1, 'sortie', 3, NULL, NULL, 'Distribution aux services', '2026-07-18', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(12, 1, 1, 'sortie', 1, NULL, NULL, 'Distribution aux services', '2026-07-17', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(13, 5, 1, 'sortie', 3, NULL, NULL, 'Distribution aux services', '2026-07-19', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(14, 2, 1, 'sortie', 2, NULL, NULL, 'Distribution aux services', '2026-07-20', '2026-07-20 17:48:39', '2026-07-20 17:48:39');
+(1, 1, 1, 'entree', 8, NULL, NULL, '[Démo] Stock initial', '2026-07-31', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(2, 2, 1, 'entree', 3, NULL, NULL, '[Démo] Stock initial', '2026-07-30', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(3, 3, 1, 'entree', 26, NULL, NULL, '[Démo] Stock initial', '2026-07-30', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(4, 4, 1, 'entree', 150, NULL, NULL, '[Démo] Stock initial', '2026-08-01', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(5, 5, 1, 'entree', 2, NULL, NULL, '[Démo] Stock initial', '2026-08-08', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(6, 6, 1, 'entree', 4, NULL, NULL, '[Démo] Stock initial', '2026-08-05', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(7, 7, 1, 'entree', 15, NULL, NULL, '[Démo] Stock initial', '2026-08-01', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(8, 8, 1, 'entree', 30, NULL, NULL, '[Démo] Stock initial', '2026-07-30', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(9, 9, 1, 'entree', 12, NULL, NULL, '[Démo] Stock initial', '2026-08-08', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(10, 10, 1, 'entree', 5, NULL, NULL, '[Démo] Stock initial', '2026-08-07', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(11, 1, 1, 'sortie', 3, NULL, NULL, '[Démo] Distribution aux services', '2026-08-11', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(12, 5, 1, 'sortie', 1, NULL, NULL, '[Démo] Distribution aux services', '2026-08-07', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(13, 9, 1, 'sortie', 2, NULL, NULL, '[Démo] Distribution aux services', '2026-08-11', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(14, 7, 1, 'sortie', 3, NULL, NULL, '[Démo] Distribution aux services', '2026-08-06', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(15, 3, 3, 'entree', 20, NULL, NULL, 'Réception commande #1 — InfoTech Solutions', '2026-08-11', '2026-08-11 03:16:35', '2026-08-11 03:16:35');
 
 -- --------------------------------------------------------
 
@@ -257,6 +260,21 @@ CREATE TABLE `password_reset_tokens` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `prix_achat_historiques`
+--
+
+CREATE TABLE `prix_achat_historiques` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `produit_id` bigint(20) UNSIGNED NOT NULL,
+  `prix_achat` decimal(10,2) NOT NULL,
+  `date_changement` date NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -275,7 +293,6 @@ CREATE TABLE `produits` (
   `seuil_alerte` int(11) NOT NULL DEFAULT 5,
   `quantite_max` int(11) DEFAULT NULL COMMENT 'Capacité / stock cible souhaité pour cet article — sert de référence à 100% pour la jauge de stock',
   `prix_achat` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `prix_vente` decimal(10,2) NOT NULL DEFAULT 0.00,
   `emplacement` varchar(255) DEFAULT NULL COMMENT 'Hangar, zone piste, magasin technique...',
   `criticite` enum('normal','critique') NOT NULL DEFAULT 'normal' COMMENT 'Critique = pièce impactant directement la sécurité/disponibilité opérationnelle',
   `created_at` timestamp NULL DEFAULT NULL,
@@ -286,17 +303,17 @@ CREATE TABLE `produits` (
 -- Déchargement des données de la table `produits`
 --
 
-INSERT INTO `produits` (`id`, `nom`, `reference`, `category_id`, `fournisseur_id`, `quantite`, `seuil_alerte`, `quantite_max`, `prix_achat`, `prix_vente`, `emplacement`, `criticite`, `created_at`, `updated_at`) VALUES
-(1, 'Ordinateur de bureau', 'INFO-001', 2, 2, 8, 3, 10, 5200.00, 6200.00, 'Magasin informatique', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(2, 'Imprimante laser', 'INFO-002', 2, 2, 3, 2, 6, 1800.00, 2100.00, 'Magasin informatique', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(3, 'Cartouche toner', 'INFO-003', 2, 2, 26, 10, 40, 450.00, 520.00, 'Magasin informatique', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(4, 'Ramette papier A4', 'BUR-001', 1, 1, 150, 50, 300, 28.00, 35.00, 'Magasin général', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(5, 'Chaise de bureau', 'BUR-002', 1, 1, 2, 5, 15, 650.00, 780.00, 'Magasin général', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(6, 'Extincteur portable 6kg', 'SEC-001', 3, 3, 4, 10, 25, 320.00, 380.00, 'Local technique', 'critique', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(7, 'Gilet de sécurité haute visibilité', 'SEC-002', 3, 3, 15, 20, 50, 45.00, 60.00, 'Magasin général', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(8, 'Gants de protection (paire)', 'SEC-003', 3, 3, 30, 15, 60, 15.00, 22.00, 'Magasin général', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(9, 'Produit désinfectant sol 5L', 'ENT-001', 4, 4, 12, 8, 30, 55.00, 70.00, 'Local entretien', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39'),
-(10, 'Papier essuie-mains (carton)', 'ENT-002', 4, 4, 5, 10, 25, 90.00, 110.00, 'Local entretien', 'normal', '2026-07-20 17:48:39', '2026-07-20 17:48:39');
+INSERT INTO `produits` (`id`, `nom`, `reference`, `category_id`, `fournisseur_id`, `quantite`, `seuil_alerte`, `quantite_max`, `prix_achat`, `emplacement`, `criticite`, `created_at`, `updated_at`) VALUES
+(1, 'Ordinateur de bureau', 'INFO-001', 2, 2, 8, 3, 10, 5200.00, 'Magasin informatique', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(2, 'Imprimante laser', 'INFO-002', 2, 2, 3, 2, 6, 1800.00, 'Magasin informatique', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(3, 'Cartouche toner', 'INFO-003', 2, 2, 46, 10, 40, 450.00, 'Magasin informatique', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:16:35'),
+(4, 'Ramette papier A4', 'BUR-001', 1, 1, 150, 50, 300, 28.00, 'Magasin général', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(5, 'Chaise de bureau', 'BUR-002', 1, 1, 2, 5, 15, 650.00, 'Magasin général', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(6, 'Extincteur portable 6kg', 'SEC-001', 3, 3, 4, 10, 25, 320.00, 'Local technique', 'critique', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(7, 'Gilet de sécurité haute visibilité', 'SEC-002', 3, 3, 15, 20, 50, 45.00, 'Magasin général', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(8, 'Gants de protection (paire)', 'SEC-003', 3, 3, 30, 15, 60, 15.00, 'Magasin général', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(9, 'Produit désinfectant sol 5L', 'ENT-001', 4, 4, 12, 8, 30, 55.00, 'Local entretien', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(10, 'Papier essuie-mains (carton)', 'ENT-002', 4, 4, 5, 10, 25, 90.00, 'Local entretien', 'normal', '2026-08-11 03:14:23', '2026-08-11 03:14:23');
 
 -- --------------------------------------------------------
 
@@ -313,12 +330,20 @@ CREATE TABLE `sessions` (
   `last_activity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
 --
--- Déchargement des données de la table `sessions`
+-- Structure de la table `stock_emplacements`
 --
 
-INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('0HDIL4E3MkYlnp28TnMKaLkxbsMhD3kjDb9DpGvi', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJSZ3cxZWIzem9mY1JWaHVJdnU1RHhkYk8yWkRwUTNVRktSU2lMNTFYIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJkYXNoYm9hcmQifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119LCJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI6MX0=', 1784573802);
+CREATE TABLE `stock_emplacements` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `produit_id` bigint(20) UNSIGNED NOT NULL,
+  `emplacement` varchar(255) NOT NULL,
+  `quantite` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -361,9 +386,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `role`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Tahir', 'admin@aerostock.ma', 'admin', NULL, '$2y$12$rVUkjNVXcFueQhkuVq.1oOMj0Jxwccbpy4yaBX38HONetHVswsyYy', NULL, '2026-07-20 17:48:38', '2026-07-20 17:48:38'),
-(2, 'Salma Ouazzani', 's.ouazzani@onda-stock.ma', 'magasinier', NULL, '$2y$12$N6fNsg2ZGHQbM9bpKLGpt.CvdXSuU7QDlkFmNV5Mo6gC7k62lf..y', NULL, '2026-07-20 17:48:38', '2026-07-20 17:48:38'),
-(3, 'Karim Benaissa', 'k.benaissa@onda-stock.ma', 'magasinier', NULL, '$2y$12$akTq6sEtSGSTBDjuv7h9KO3q25O/pcE4peG3cg7oTmSA3ZbZzCIwq', NULL, '2026-07-20 17:48:39', '2026-07-20 17:48:39');
+(1, 'Tahir', 'admin@onda.ma', 'admin', NULL, '$2y$12$3g0OcZo02aw5lln52/phTuEC0fF02ExV8NRvLMERYhvBRuRBozAg2', NULL, '2026-08-11 03:14:22', '2026-08-11 03:14:22'),
+(2, 'Salma Ouazzani', 's.ouazzani@onda.ma', 'magasinier', NULL, '$2y$12$ymVKXJnoOyLQH6aUc13I2./pdzM2nTAnCcDPizoMbIxoFzYcXIqoe', NULL, '2026-08-11 03:14:23', '2026-08-11 03:14:23'),
+(3, 'Karim Benaissa', 'k.benaissa@onda.ma', 'magasinier', NULL, '$2y$12$kkcz6V7CoAvHBVzoa3DyX.4x14ziVKPMTENjhqyn2bss9FIbp5gzm', NULL, '2026-08-11 03:14:23', '2026-08-11 03:14:23');
 
 --
 -- Index pour les tables déchargées
@@ -446,6 +471,13 @@ ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
+-- Index pour la table `prix_achat_historiques`
+--
+ALTER TABLE `prix_achat_historiques`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prix_achat_historiques_produit_id_foreign` (`produit_id`);
+
+--
 -- Index pour la table `produits`
 --
 ALTER TABLE `produits`
@@ -461,6 +493,13 @@ ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sessions_user_id_index` (`user_id`),
   ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Index pour la table `stock_emplacements`
+--
+ALTER TABLE `stock_emplacements`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `stock_emplacements_produit_id_emplacement_unique` (`produit_id`,`emplacement`);
 
 --
 -- Index pour la table `transferts_stock`
@@ -515,19 +554,31 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT pour la table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT pour la table `mouvements_stock`
 --
 ALTER TABLE `mouvements_stock`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT pour la table `prix_achat_historiques`
+--
+ALTER TABLE `prix_achat_historiques`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT pour la table `stock_emplacements`
+--
+ALTER TABLE `stock_emplacements`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `transferts_stock`
@@ -561,11 +612,23 @@ ALTER TABLE `mouvements_stock`
   ADD CONSTRAINT `mouvements_stock_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Contraintes pour la table `prix_achat_historiques`
+--
+ALTER TABLE `prix_achat_historiques`
+  ADD CONSTRAINT `prix_achat_historiques_produit_id_foreign` FOREIGN KEY (`produit_id`) REFERENCES `produits` (`id`) ON DELETE CASCADE;
+
+--
 -- Contraintes pour la table `produits`
 --
 ALTER TABLE `produits`
   ADD CONSTRAINT `produits_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `produits_fournisseur_id_foreign` FOREIGN KEY (`fournisseur_id`) REFERENCES `fournisseurs` (`id`) ON DELETE SET NULL;
+
+--
+-- Contraintes pour la table `stock_emplacements`
+--
+ALTER TABLE `stock_emplacements`
+  ADD CONSTRAINT `stock_emplacements_produit_id_foreign` FOREIGN KEY (`produit_id`) REFERENCES `produits` (`id`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `transferts_stock`
