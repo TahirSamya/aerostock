@@ -40,7 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/fournisseurs', [FournisseurController::class, 'store'])->name('fournisseurs.store');
 
     Route::get('/mouvements', [MouvementStockController::class, 'index'])->name('mouvements.index');
-    Route::get('/mouvements/export/csv', [MouvementStockController::class, 'exportCsv'])->name('mouvements.export.csv');
+   
+
+    // Route::get('/mouvements/export/csv', [MouvementStockController::class, 'exportCsv'])->name('mouvements.export.csv');
+    Route::get('/mouvements/export/xlsx', [MouvementStockController::class, 'exportXlsx'])->name('mouvements.export.xlsx');
+
+
     Route::get('/mouvements/{mouvement}/pdf', [MouvementStockController::class, 'exportPdf'])->name('mouvements.export.pdf');
     Route::post('/mouvements', [MouvementStockController::class, 'store'])->name('mouvements.store');
 

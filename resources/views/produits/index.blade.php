@@ -13,9 +13,9 @@
     <a href="{{ route('produits.export.xlsx') }}" class="btn btn-sf-outline">
         <i class="bi bi-file-earmark-excel me-1"></i> Exporter (Excel)
     </a>
-    <a href="{{ route('produits.export.csv') }}" class="btn btn-sf-outline btn-sm">
+    <!-- <a href="{{ route('produits.export.csv') }}" class="btn btn-sf-outline btn-sm">
         <i class="bi bi-filetype-csv me-1"></i> CSV
-    </a>
+    </a> -->
     <a href="{{ route('produits.export.pdf') }}" target="_blank" class="btn btn-sf-outline">
         <i class="bi bi-file-earmark-pdf me-1"></i> Exporter (PDF)
     </a>

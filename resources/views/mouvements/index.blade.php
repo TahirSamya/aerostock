@@ -15,9 +15,12 @@
             <i class="bi bi-sliders me-1"></i> Ajustement manuel
         </button>
     @endif
-    <a href="{{ route('mouvements.export.csv') }}" class="btn btn-sf-outline">
+    <!-- <a href="{{ route('mouvements.export.csv') }}" class="btn btn-sf-outline">
         <i class="bi bi-file-earmark-spreadsheet me-1"></i> Exporter (Excel)
-    </a>
+    </a> -->
+        <a href="{{ route('mouvements.export.xlsx') }}" class="btn btn-sf-outline">
+            <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+        </a>
 </div>
 
 <form method="GET" class="d-flex gap-2 mb-3">

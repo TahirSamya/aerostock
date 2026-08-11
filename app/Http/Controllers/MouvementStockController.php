@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class MouvementStockController extends Controller
 {
     public function index(Request $request)
@@ -195,5 +198,74 @@ class MouvementStockController extends Controller
             'Content-Disposition' => 'attachment; filename="mouvements_stock_' . now()->format('Y-m-d') . '.csv"',
             'Content-Length' => strlen($content),
         ]);
+    }
+
+
+
+        public function exportXlsx()
+    {
+        $mouvements = MouvementStock::with(['produit', 'user'])
+            ->latest('date_mouvement')
+            ->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setTitle('Mouvements');
+
+        $headers = [
+            'Date',
+            'Article',
+            'Référence',
+            'Type',
+            'Quantité',
+            'Motif',
+            'Agent'
+        ];
+
+        $sheet->fromArray($headers, null, 'A1');
+
+        $sheet->getStyle('A1:G1')
+            ->getFont()
+            ->setBold(true);
+
+        $row = 2;
+
+        foreach ($mouvements as $m) {
+
+            $type = match ($m->type) {
+                'entree' => 'Entrée',
+                'sortie' => 'Sortie',
+                default => 'Ajustement'
+            };
+
+            $sheet->fromArray([
+                $m->date_mouvement,
+                $m->produit->nom ?? '',
+                $m->produit->reference ?? '',
+                $type,
+                $m->quantite,
+                $m->motif ?? '',
+                $m->user->name ?? '',
+            ], null, "A{$row}");
+
+            $row++;
+        }
+
+        foreach (range('A', 'G') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $filename = 'mouvements_stock_' . now()->format('Y-m-d') . '.xlsx';
+
+        $tempPath = storage_path('app/' . $filename);
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempPath);
+
+        return response()->download(
+            $tempPath,
+            $filename
+        )->deleteFileAfterSend(true);
     }
 }
