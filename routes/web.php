@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/mouvements', [MouvementStockController::class, 'index'])->name('mouvements.index');
    
 
-    // Route::get('/mouvements/export/csv', [MouvementStockController::class, 'exportCsv'])->name('mouvements.export.csv');
+
     Route::get('/mouvements/export/xlsx', [MouvementStockController::class, 'exportXlsx'])->name('mouvements.export.xlsx');
 
 
