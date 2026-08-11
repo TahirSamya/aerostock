@@ -1,57 +1,47 @@
 # AeroStock
 
-Application de gestion de stock développée dans le cadre de notre PFE. Le thème choisi est un contexte aéroportuaire, mais il s'agit d'un prototype académique, pas d'un système connecté à l'ONDA ou à des infrastructures réelles.
+Application de gestion du stock interne de pièces et équipements (matériel informatique, équipement de sécurité, fournitures de bureau, produits d'entretien), réalisée par nous deux, mon frère et moi, dans le cadre de notre projet de fin d'études à l'ONDA.
 
-## Stack
+Auteurs : Walid Tahir et Samya Tahir
+Encadrant : Mohamed Amine Elhachimi
 
-Laravel, Blade, Bootstrap 5, Chart.js, MySQL
+Ce projet est un prototype académique inspiré du contexte ONDA, pas un système officiel connecté aux infrastructures réelles.
+
+## Technologies utilisées
+
+Laravel 13, PHP 8.5, Blade, Bootstrap 5, Chart.js, MySQL (via XAMPP)
 
 ## Installation
 
-1. Créer le projet Laravel
-```bash
-composer create-project laravel/laravel aerostock
-cd aerostock
-```
+1. Créer un projet Laravel avec composer create-project laravel/laravel aerostock, puis composer require barryvdh/laravel-dompdf
+2. Copier les dossiers app, database, resources/views, public/css et le fichier routes/web.php de ce dépôt par-dessus
+3. Dans bootstrap/app.php, enregistrer les deux middlewares du projet : admin (EnsureUserIsAdmin) et ShareGlobalStockData
+4. Configurer le fichier .env avec les identifiants de la base de données aerostock, et mettre SESSION_DRIVER sur file
+5. Créer une base de données vide nommée aerostock dans phpMyAdmin
+6. Lancer les commandes php artisan migrate:fresh --seed puis php artisan serve
+7. Ouvrir http://127.0.0.1:8000
 
-2. Copier les fichiers de ce dépôt dans le projet :
-- `database/migrations/*`
-- `database/seeders/DatabaseSeeder.php`
-- `app/Models/*`
-- `app/Http/Controllers/*`
-- `routes/web.php` 
-- `resources/views/*`
-- `public/css/custom.css`
+## Comptes de démonstration
 
-3. Configurer la base de données dans `.env`
-```
-DB_CONNECTION=mysql
-DB_DATABASE=aerostock
-DB_USERNAME=root
-DB_PASSWORD=
-```
+Admin      : admin@onda.ma,         mot de passe: password
+Magasinier : s.ouazzani@onda.ma,    mot de passe: password1
+Magasinier : k.benaissa@onda.ma,    mot de passe: password2
 
-4. Migrer et peupler la base
-```bash
-php artisan migrate:fresh --seed
-```
+## Fonctionnalités principales
 
-5. Lancer le serveur
-```bash
-php artisan serve
-```
-Accès sur `http://127.0.0.1:8000`, compte : admin@aerostock.ma / password
+Articles avec référence générée automatiquement par catégorie, seuil
+d'alerte, niveau de criticité et jauge de stock avec capacité maximale.
 
-## Fonctionnalités
+Mouvements de stock (entrée, sortie, ajustement manuel réservé à l'admin)
+et transferts entre emplacements.
 
-- Authentification avec deux rôles : administrateur et magasinier
-- Dashboard avec graphiques (mouvements des 7 derniers jours, répartition par catégorie) et notifications d'alerte stock
-- Gestion des pièces avec emplacement, niveau de criticité et quantité max
-- Mouvements de stock (entrée/sortie) avec vérification du stock disponible et annulation possible
-- Ajustements manuels de stock (admin)
-- Transferts de stock entre emplacements
-- Commandes fournisseurs avec suivi de statut et réception partielle ou totale
-- Export CSV et PDF
-- Gestion des utilisateurs, catégories et fournisseurs
+Commandes fournisseurs avec mise à jour automatique du stock à la
+réception.
 
+Tableau de bord avec graphiques, alertes triées par urgence, statistiques
+de consommation, recherche rapide et notifications par email en cas de
+rupture d'un article critique.
 
+Export de l'inventaire et des mouvements en CSV et en PDF.
+
+Deux rôles utilisateurs : admin (accès complet) et magasinier (usage quotidien, sans les actions sensibles).
