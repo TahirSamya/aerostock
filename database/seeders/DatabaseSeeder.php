@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
         // --- Utilisateurs ---
         $admin = User::create([
             'name' => 'Amine Rachidi',
-            'email' => 'admin@onda-stock.ma',
+            'email' => 'agit add .
+',
             'password' => bcrypt('password'),
             'role' => 'admin',
         ]);
