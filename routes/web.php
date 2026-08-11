@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/produits', [ProduitController::class, 'index'])->name('produits.index');
-    // Route::get('/produits/export/csv', [ProduitController::class, 'exportCsv'])->name('produits.export.csv');
+    Route::get('/produits/export/csv', [ProduitController::class, 'exportCsv'])->name('produits.export.csv');
     Route::get('/produits/export/xlsx', [ProduitController::class, 'exportXlsx'])->name('produits.export.xlsx');
     Route::get('/produits/export/pdf', [ProduitController::class, 'exportPdf'])->name('produits.export.pdf');
     Route::post('/produits', [ProduitController::class, 'store'])->name('produits.store');
