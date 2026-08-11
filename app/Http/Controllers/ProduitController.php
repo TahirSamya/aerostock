@@ -17,7 +17,7 @@ class ProduitController extends Controller
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(function ($q) use ($s) {
-                $q->where('nom', 'like', "%{$s}%")->orWhere('reference', 'like', "%{$s}%");
+                $q->where('produits.nom', 'like', "%{$s}%")->orWhere('produits.reference', 'like', "%{$s}%");
             });
         }
 
@@ -178,5 +178,56 @@ class ProduitController extends Controller
             'Content-Disposition' => 'attachment; filename="inventaire_' . now()->format('Y-m-d') . '.csv"',
             'Content-Length' => strlen($content),
         ]);
+    }
+
+    /**
+     * Exporte l'inventaire complet en vrai fichier Excel (.xlsx).
+     * Contrairement au CSV, le .xlsx n'a aucune ambiguïté d'encodage :
+     * Excel l'ouvre toujours correctement en double-clic, sur n'importe quel PC.
+     */
+    public function exportXlsx()
+    {
+        $produits = Produit::with(['category', 'fournisseur'])
+            ->join('categories', 'categories.id', '=', 'produits.category_id')
+            ->orderBy('categories.nom')->orderBy('produits.reference')
+            ->select('produits.*')
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Inventaire');
+
+        $headers = ['Nom', 'Référence', 'Catégorie', 'Fournisseur', 'Emplacement', 'Criticité', 'Quantité', 'Seuil alerte', 'Stock max', 'Prix achat'];
+        $sheet->fromArray($headers, null, 'A1');
+        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+
+        $row = 2;
+        foreach ($produits as $p) {
+            $sheet->fromArray([
+                $p->nom,
+                $p->reference,
+                $p->category->nom ?? '',
+                $p->fournisseur->nom ?? '',
+                $p->emplacement ?? '',
+                ucfirst($p->criticite),
+                $p->quantite,
+                $p->seuil_alerte,
+                $p->quantite_max,
+                (float) $p->prix_achat,
+            ], null, "A{$row}");
+            $row++;
+        }
+
+        foreach (range('A', 'J') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $filename = 'inventaire_' . now()->format('Y-m-d') . '.xlsx';
+        $tempPath = storage_path('app/' . $filename);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save($tempPath);
+
+        return response()->download($tempPath, $filename)->deleteFileAfterSend(true);
     }
 }

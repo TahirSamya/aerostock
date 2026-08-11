@@ -1,0 +1,29 @@
+Bonjour M. Mohamed Amine LHACHIMI,
+
+J'espère que vous allez bien et que vous avez passé d'agréables congés.
+
+Je me permets de vous transmettre la version finale de notre projet de fin d'études, **AeroStock**, une application de gestion des stocks de pièces et d'équipements internes (matériel informatique, équipements de sécurité, fournitures de bureau et produits d'entretien), développée en collaboration avec mon frère Walid.
+
+Depuis l'envoi de la version précédente le 20 juillet dernier, nous avons poursuivi le développement du projet afin de l'enrichir et d'améliorer ses fonctionnalités. Les principales évolutions apportées sont les suivantes :
+
+* Génération automatique des références des articles par catégorie (ex. : SEC-001, INFO-002) ;
+* Gestion du niveau de criticité des articles et affichage d'une jauge de stock avec une capacité maximale par référence ;
+* Répartition du stock par emplacement physique et gestion des transferts entre emplacements ;
+* Gestion des commandes fournisseurs avec réception totale ou partielle et mise à jour automatique du stock lors de chaque réception ;
+* Mise en place d'une cloche de notifications globale (alertes visibles sur l'ensemble des pages) et envoi automatique d'un e-mail en cas de rupture de stock d'un article critique ;
+* Export de l'inventaire et des mouvements de stock aux formats CSV et PDF ;
+* Gestion de deux rôles utilisateurs distincts : **Administrateur** (accès complet) et **Magasinier** (utilisation quotidienne avec restrictions sur les actions sensibles).
+
+Le projet a été développé avec **Laravel 13, PHP 8.5, Blade, Bootstrap 5, Chart.js et MySQL**.
+
+Vous trouverez ci-joint les diagrammes UML mis à jour (diagramme de classes et diagramme de séquence relatif à la réception d'une commande fournisseur), ainsi que le lien vers le dépôt GitHub :
+
+https://github.com/TahirSamya/aerostock.git
+
+Le rapport du projet est actuellement en cours de rédaction. Chacun de nous travaille sur sa partie, et nous vous le transmettrons dès qu'il sera finalisé.
+
+Nous restons à votre entière disposition pour toute remarque, suggestion ou recommandation avant la soutenance.
+
+Cordialement,
+
+Samya Tahir
