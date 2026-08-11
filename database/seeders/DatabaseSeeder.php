@@ -15,9 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         // --- Utilisateurs ---
         $admin = User::create([
-            'name' => 'Amine Rachidi',
-            'email' => 'agit add .
-',
+            'name' => 'Tahir',
+            'email' => 'admin@onda.ma',
             'password' => bcrypt('password'),
             'role' => 'admin',
         ]);
@@ -86,16 +85,16 @@ class DatabaseSeeder extends Seeder
 
         // --- Produits (stock administratif courant, rien de technique spécialisé) ---
         $produits = [
-            ['nom' => 'Ordinateur de bureau', 'reference' => 'INFO-001', 'category_id' => $informatique->id, 'fournisseur_id' => $f2->id, 'quantite' => 8, 'seuil_alerte' => 3, 'quantite_max' => 10, 'prix_achat' => 5200, 'prix_vente' => 6200, 'emplacement' => 'Magasin informatique', 'criticite' => 'normal'],
-            ['nom' => 'Imprimante laser', 'reference' => 'INFO-002', 'category_id' => $informatique->id, 'fournisseur_id' => $f2->id, 'quantite' => 3, 'seuil_alerte' => 2, 'quantite_max' => 6, 'prix_achat' => 1800, 'prix_vente' => 2100, 'emplacement' => 'Magasin informatique', 'criticite' => 'normal'],
-            ['nom' => 'Cartouche toner', 'reference' => 'INFO-003', 'category_id' => $informatique->id, 'fournisseur_id' => $f2->id, 'quantite' => 26, 'seuil_alerte' => 10, 'quantite_max' => 40, 'prix_achat' => 450, 'prix_vente' => 520, 'emplacement' => 'Magasin informatique', 'criticite' => 'normal'],
-            ['nom' => 'Ramette papier A4', 'reference' => 'BUR-001', 'category_id' => $bureau->id, 'fournisseur_id' => $f1->id, 'quantite' => 150, 'seuil_alerte' => 50, 'quantite_max' => 300, 'prix_achat' => 28, 'prix_vente' => 35, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
-            ['nom' => 'Chaise de bureau', 'reference' => 'BUR-002', 'category_id' => $bureau->id, 'fournisseur_id' => $f1->id, 'quantite' => 2, 'seuil_alerte' => 5, 'quantite_max' => 15, 'prix_achat' => 650, 'prix_vente' => 780, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
-            ['nom' => 'Extincteur portable 6kg', 'reference' => 'SEC-001', 'category_id' => $securite->id, 'fournisseur_id' => $f3->id, 'quantite' => 4, 'seuil_alerte' => 10, 'quantite_max' => 25, 'prix_achat' => 320, 'prix_vente' => 380, 'emplacement' => 'Local technique', 'criticite' => 'critique'],
-            ['nom' => 'Gilet de sécurité haute visibilité', 'reference' => 'SEC-002', 'category_id' => $securite->id, 'fournisseur_id' => $f3->id, 'quantite' => 15, 'seuil_alerte' => 20, 'quantite_max' => 50, 'prix_achat' => 45, 'prix_vente' => 60, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
-            ['nom' => 'Gants de protection (paire)', 'reference' => 'SEC-003', 'category_id' => $securite->id, 'fournisseur_id' => $f3->id, 'quantite' => 30, 'seuil_alerte' => 15, 'quantite_max' => 60, 'prix_achat' => 15, 'prix_vente' => 22, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
-            ['nom' => 'Produit désinfectant sol 5L', 'reference' => 'ENT-001', 'category_id' => $entretien->id, 'fournisseur_id' => $f4->id, 'quantite' => 12, 'seuil_alerte' => 8, 'quantite_max' => 30, 'prix_achat' => 55, 'prix_vente' => 70, 'emplacement' => 'Local entretien', 'criticite' => 'normal'],
-            ['nom' => 'Papier essuie-mains (carton)', 'reference' => 'ENT-002', 'category_id' => $entretien->id, 'fournisseur_id' => $f4->id, 'quantite' => 5, 'seuil_alerte' => 10, 'quantite_max' => 25, 'prix_achat' => 90, 'prix_vente' => 110, 'emplacement' => 'Local entretien', 'criticite' => 'normal'],
+            ['nom' => 'Ordinateur de bureau', 'reference' => 'INFO-001', 'category_id' => $informatique->id, 'fournisseur_id' => $f2->id, 'quantite' => 8, 'seuil_alerte' => 3, 'quantite_max' => 10, 'prix_achat' => 5200, 'emplacement' => 'Magasin informatique', 'criticite' => 'normal'],
+            ['nom' => 'Imprimante laser', 'reference' => 'INFO-002', 'category_id' => $informatique->id, 'fournisseur_id' => $f2->id, 'quantite' => 3, 'seuil_alerte' => 2, 'quantite_max' => 6, 'prix_achat' => 1800, 'emplacement' => 'Magasin informatique', 'criticite' => 'normal'],
+            ['nom' => 'Cartouche toner', 'reference' => 'INFO-003', 'category_id' => $informatique->id, 'fournisseur_id' => $f2->id, 'quantite' => 26, 'seuil_alerte' => 10, 'quantite_max' => 40, 'prix_achat' => 450, 'emplacement' => 'Magasin informatique', 'criticite' => 'normal'],
+            ['nom' => 'Ramette papier A4', 'reference' => 'BUR-001', 'category_id' => $bureau->id, 'fournisseur_id' => $f1->id, 'quantite' => 150, 'seuil_alerte' => 50, 'quantite_max' => 300, 'prix_achat' => 28, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
+            ['nom' => 'Chaise de bureau', 'reference' => 'BUR-002', 'category_id' => $bureau->id, 'fournisseur_id' => $f1->id, 'quantite' => 2, 'seuil_alerte' => 5, 'quantite_max' => 15, 'prix_achat' => 650, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
+            ['nom' => 'Extincteur portable 6kg', 'reference' => 'SEC-001', 'category_id' => $securite->id, 'fournisseur_id' => $f3->id, 'quantite' => 4, 'seuil_alerte' => 10, 'quantite_max' => 25, 'prix_achat' => 320, 'emplacement' => 'Local technique', 'criticite' => 'critique'],
+            ['nom' => 'Gilet de sécurité haute visibilité', 'reference' => 'SEC-002', 'category_id' => $securite->id, 'fournisseur_id' => $f3->id, 'quantite' => 15, 'seuil_alerte' => 20, 'quantite_max' => 50, 'prix_achat' => 45, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
+            ['nom' => 'Gants de protection (paire)', 'reference' => 'SEC-003', 'category_id' => $securite->id, 'fournisseur_id' => $f3->id, 'quantite' => 30, 'seuil_alerte' => 15, 'quantite_max' => 60, 'prix_achat' => 15, 'emplacement' => 'Magasin général', 'criticite' => 'normal'],
+            ['nom' => 'Produit désinfectant sol 5L', 'reference' => 'ENT-001', 'category_id' => $entretien->id, 'fournisseur_id' => $f4->id, 'quantite' => 12, 'seuil_alerte' => 8, 'quantite_max' => 30, 'prix_achat' => 55, 'emplacement' => 'Local entretien', 'criticite' => 'normal'],
+            ['nom' => 'Papier essuie-mains (carton)', 'reference' => 'ENT-002', 'category_id' => $entretien->id, 'fournisseur_id' => $f4->id, 'quantite' => 5, 'seuil_alerte' => 10, 'quantite_max' => 25, 'prix_achat' => 90, 'emplacement' => 'Local entretien', 'criticite' => 'normal'],
         ];
 
         foreach ($produits as $p) {
