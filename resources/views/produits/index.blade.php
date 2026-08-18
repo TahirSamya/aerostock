@@ -53,10 +53,13 @@
                         <td>{{ $p->category->nom }}</td>
                         <td>{{ $p->emplacement ?? '—' }}</td>
                         <td>
-                            <span class="sf-badge {{ $p->criticite === 'critique' ? 'sf-crit-critique' : 'sf-crit-normal' }}"
-                                  title="{{ $p->criticite === 'critique' ? 'Rupture = impact direct sur une opération importante' : 'Consommable courant, rupture non bloquante' }}">
-                                {{ ucfirst($p->criticite) }}
-                            </span>
+                            @php
+    $criticite = $p->criticiteAutomatique();
+@endphp
+
+<span class="sf-badge {{ $criticite === 'critique' ? 'sf-crit-critique' : 'sf-crit-normal' }}">
+    {{ ucfirst($criticite) }}
+</span>
                         </td>
                         <td>
                             @php
@@ -180,12 +183,7 @@
                         <div class="row">
                             <div class="col-6 mb-3"><label class="form-label small fw-semibold">Emplacement</label>
                                 <input class="form-control" name="emplacement" value="{{ $p->emplacement }}" placeholder="Magasin général, Local technique..."></div>
-                            <div class="col-6 mb-3"><label class="form-label small fw-semibold">Criticité</label>
-                                <select class="form-select" name="criticite">
-                                    <option value="normal" @selected($p->criticite=='normal')>Normal</option>
-                                    <option value="critique" @selected($p->criticite=='critique')>Critique</option>
-                                </select>
-                            </div>
+                            
                         </div>
                         <div class="row">
                             <div class="col-6 mb-3"><label class="form-label small fw-semibold">Seuil alerte</label>
@@ -198,6 +196,17 @@
                         <div class="mb-3"><label class="form-label small fw-semibold">Prix d'achat</label>
                             <input type="number" step="0.01" min="0" class="form-control" name="prix_achat" value="{{ $p->prix_achat }}" required>
                         </div>
+                        @if($p->historiquePrix->count() > 1)
+                            <div class="mb-1"><label class="form-label small fw-semibold">Historique des prix</label></div>
+                            <div class="sf-price-history border rounded p-2">
+                                @foreach($p->historiquePrix as $h)
+                                    <div class="sf-price-history-item">
+                                        <span>{{ \Carbon\Carbon::parse($h->date_changement)->format('d/m/Y') }}</span>
+                                        <span class="fw-semibold">{{ number_format($h->prix_achat, 2, ',', ' ') }} MAD</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sf-outline" data-bs-dismiss="modal">Annuler</button>
@@ -257,12 +266,7 @@
                         <div class="col-6 mb-3"><label class="form-label small fw-semibold">Stock max (capacité)</label>
                             <input type="number" min="0" class="form-control" name="quantite_max" placeholder="ex: 20">
                         </div>
-                        <div class="col-6 mb-3"><label class="form-label small fw-semibold">Criticité</label>
-                            <select class="form-select" name="criticite">
-                                <option value="normal">Normal</option>
-                                <option value="critique">Critique</option>
-                            </select>
-                        </div>
+                       
                     </div>
 
                     <div class="sf-form-section">Prix d'achat</div>

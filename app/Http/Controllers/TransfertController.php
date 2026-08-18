@@ -9,14 +9,41 @@ use Illuminate\Support\Facades\DB;
 
 class TransfertController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transferts = TransfertStock::with(['produit', 'user'])
+        $query = TransfertStock::with(['produit', 'user']);
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+
+            $query->whereHas('produit', function ($q) use ($s) {
+                $q->where('nom', 'like', "%{$s}%")
+                  ->orWhere('reference', 'like', "%{$s}%");
+            });
+        }
+
+        $transferts = $query
             ->latest('date_transfert')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
+
         $produits = Produit::orderBy('nom')->get();
 
-        return view('transferts.index', compact('transferts', 'produits'));
+        $totalTransferts = TransfertStock::count();
+
+        $totalQuantite = TransfertStock::sum('quantite');
+
+        $totalProduits = TransfertStock::distinct('produit_id')->count('produit_id');
+        return view(
+            'transferts.index',
+             compact(
+        'transferts',
+        'produits',
+        'totalTransferts',
+        'totalQuantite',
+        'totalProduits'
+    )
+);
     }
 
     public function store(Request $request)
@@ -29,10 +56,14 @@ class TransfertController extends Controller
 
         try {
             DB::transaction(function () use ($data, $request) {
-                $produit = Produit::lockForUpdate()->findOrFail($data['produit_id']);
+
+                $produit = Produit::lockForUpdate()
+                    ->findOrFail($data['produit_id']);
 
                 if ($data['quantite'] > $produit->quantite) {
-                    throw new \Exception('La quantité à transférer dépasse le stock disponible.');
+                    throw new \Exception(
+                        'La quantité à transférer dépasse le stock disponible.'
+                    );
                 }
 
                 TransfertStock::create([
@@ -44,18 +75,39 @@ class TransfertController extends Controller
                     'date_transfert' => now()->toDateString(),
                 ]);
 
-                // Si on transfère TOUT le stock, l'emplacement du produit change définitivement.
-                // Si c'est un transfert partiel, on garde l'emplacement d'origine par simplicité
-                // (une vraie gestion multi-emplacements demanderait une table de stock par
-                // emplacement — hors périmètre de ce prototype, mentionné en perspective).
                 if ($data['quantite'] === $produit->quantite) {
-                    $produit->update(['emplacement' => $data['emplacement_destination']]);
+                    $produit->update([
+                        'emplacement' => $data['emplacement_destination']
+                    ]);
                 }
             });
+
         } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+
+            return back()->with(
+                'error',
+                $e->getMessage()
+            );
         }
 
-        return back()->with('success', 'Transfert enregistré avec succès.');
+        return back()->with(
+            'success',
+            'Transfert enregistré avec succès.'
+        );
     }
+    public function annuler(TransfertStock $transfert)
+{
+    if ($transfert->statut === 'annule') {
+        return back()->with('error', 'Ce transfert est déjà annulé.');
+    }
+
+    $transfert->update([
+        'statut' => 'annule'
+    ]);
+
+    return back()->with(
+        'success',
+        'Transfert annulé avec succès.'
+    );
+}
 }

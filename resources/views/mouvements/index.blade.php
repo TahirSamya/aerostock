@@ -22,22 +22,55 @@
         </a>
 </div>
 
-<form method="GET" class="d-flex gap-2 mb-3">
-    <select name="type" class="form-select" style="max-width:200px" onchange="this.form.submit()">
+<form method="GET" class="d-flex gap-2 mb-3 flex-wrap">
+
+    <input
+        type="text"
+        name="search"
+        value="{{ request('search') }}"
+        class="form-control"
+        style="max-width:300px"
+        placeholder="Rechercher article ou référence...">
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-search"></i>
+    </button>
+
+    <select name="type"
+            class="form-select"
+            style="max-width:200px"
+            onchange="this.form.submit()">
         <option value="">Tous les types</option>
         <option value="entree" @selected(request('type')=='entree')>Entrée</option>
         <option value="sortie" @selected(request('type')=='sortie')>Sortie</option>
         <option value="ajustement" @selected(request('type')=='ajustement')>Ajustement</option>
     </select>
-    <select name="produit_id" class="form-select" style="max-width:280px" onchange="this.form.submit()">
+
+    <select name="produit_id"
+            class="form-select"
+            style="max-width:280px"
+            onchange="this.form.submit()">
         <option value="">Tous les articles</option>
+
         @foreach($produits as $p)
-            <option value="{{ $p->id }}" @selected(request('produit_id')==$p->id)>{{ $p->nom }}</option>
+            <option value="{{ $p->id }}"
+                @selected(request('produit_id') == $p->id)>
+                {{ $p->nom }}
+            </option>
         @endforeach
     </select>
-    @if(request('type') || request('produit_id'))
-        <a href="{{ route('mouvements.index') }}" class="btn btn-sf-outline">Réinitialiser</a>
+
+    @if(
+        request('search')
+        || request('type')
+        || request('produit_id')
+    )
+        <a href="{{ route('mouvements.index') }}"
+           class="btn btn-outline-secondary">
+            Réinitialiser
+        </a>
     @endif
+
 </form>
 
 <div class="sf-panel">

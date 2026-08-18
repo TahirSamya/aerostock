@@ -27,7 +27,7 @@
             @csrf
             <div class="mb-3">
                 <label class="form-label small fw-semibold">Email</label>
-                <input type="email" name="email" class="form-control" value="admin@aerostock.ma" required autofocus>
+                <input type="email" name="email" class="form-control" value="admin@onda.ma" required autofocus>
             </div>
             <div class="mb-4">
                 <label class="form-label small fw-semibold">Mot de passe</label>

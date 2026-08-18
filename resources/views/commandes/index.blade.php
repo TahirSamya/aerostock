@@ -12,6 +12,31 @@
     </button>
 </div>
 
+<form method="GET" class="d-flex gap-2 mb-3">
+
+    <input
+        type="text"
+        name="search"
+        value="{{ request('search') }}"
+        class="form-control"
+        style="max-width:400px"
+        placeholder="Rechercher article ou fournisseur...">
+
+    <button
+        type="submit"
+        class="btn btn-primary">
+        <i class="bi bi-search"></i>
+    </button>
+
+    @if(request('search'))
+        <a href="{{ route('commandes.index') }}"
+           class="btn btn-outline-secondary">
+            Réinitialiser
+        </a>
+    @endif
+
+</form>
+
 <div class="sf-panel">
     <table class="table sf-table mb-0">
         <thead>
@@ -129,4 +154,5 @@
         </div>
     </div>
 </div>
+
 @endsection

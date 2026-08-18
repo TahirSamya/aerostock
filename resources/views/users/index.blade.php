@@ -29,6 +29,9 @@
                         <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#editUserModal{{ $u->id }}">
                             <i class="bi bi-pencil"></i>
                         </button>
+                        <button class="btn btn-sm btn-sf-outline me-1" data-bs-toggle="modal" data-bs-target="#pwdModal{{ $u->id }}" title="Réinitialiser le mot de passe">
+                            <i class="bi bi-key"></i>
+                        </button>
                         @if($u->id !== auth()->id())
                             <form action="{{ route('users.destroy', $u) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cet utilisateur ?')">
                                 @csrf @method('DELETE')
@@ -60,6 +63,27 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-sf-outline" data-bs-dismiss="modal">Annuler</button>
                                     <button type="submit" class="btn btn-sf-primary">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal réinitialisation mot de passe -->
+                <div class="modal fade" id="pwdModal{{ $u->id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ route('users.reset-password', $u) }}">
+                                @csrf @method('PUT')
+                                <div class="modal-header"><h5 class="modal-title">Nouveau mot de passe — {{ $u->name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                                <div class="modal-body">
+                                    <label class="form-label small fw-semibold">Nouveau mot de passe</label>
+                                    <input type="password" class="form-control" name="password" minlength="8" required>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-sf-outline" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-sf-primary">Réinitialiser</button>
                                 </div>
                             </form>
                         </div>

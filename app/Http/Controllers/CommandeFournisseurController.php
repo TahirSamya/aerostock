@@ -11,16 +11,53 @@ use Illuminate\Support\Facades\DB;
 
 class CommandeFournisseurController extends Controller
 {
-    public function index()
-    {
-        $commandes = CommandeFournisseur::with(['fournisseur', 'produit', 'user'])
-            ->latest('date_commande')
-            ->paginate(15);
-        $produits = Produit::orderBy('nom')->get();
-        $fournisseurs = Fournisseur::orderBy('nom')->get();
+    public function index(Request $request)
+{
+    $query = CommandeFournisseur::with([
+        'fournisseur',
+        'produit',
+        'user'
+    ]);
 
-        return view('commandes.index', compact('commandes', 'produits', 'fournisseurs'));
+    if ($request->filled('search')) {
+
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+
+            $q->whereHas('produit', function ($p) use ($search) {
+
+                $p->where('nom', 'like', "%{$search}%")
+                  ->orWhere('reference', 'like', "%{$search}%");
+
+            })
+            ->orWhereHas('fournisseur', function ($f) use ($search) {
+
+                $f->where('nom', 'like', "%{$search}%");
+
+            });
+
+        });
     }
+
+    $commandes = $query
+        ->latest('date_commande')
+        ->paginate(15)
+        ->withQueryString();
+
+    $produits = Produit::orderBy('nom')->get();
+
+    $fournisseurs = Fournisseur::orderBy('nom')->get();
+
+    return view(
+        'commandes.index',
+        compact(
+            'commandes',
+            'produits',
+            'fournisseurs'
+        )
+    );
+}
 
     public function store(Request $request)
     {

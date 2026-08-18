@@ -15,9 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
-
-        $middleware->append(\App\Http\Middleware\ShareGlobalStockData::class);
-    })
+        
+        $middleware->web(append: [\App\Http\Middleware\ShareGlobalStockData::class]);    })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),

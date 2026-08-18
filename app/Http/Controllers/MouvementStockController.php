@@ -16,23 +16,46 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class MouvementStockController extends Controller
 {
+    
     public function index(Request $request)
-    {
-        $query = MouvementStock::with(['produit', 'user']);
+{
+    $query = MouvementStock::with(['produit', 'user']);
 
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-        if ($request->filled('produit_id')) {
-            $query->where('produit_id', $request->produit_id);
-        }
+    if ($request->filled('search')) {
 
-        $mouvements = $query->latest('date_mouvement')->latest('id')->paginate(15)->withQueryString();
-        $produits = Produit::orderBy('nom')->get();
+        $search = $request->search;
 
-        return view('mouvements.index', compact('mouvements', 'produits'));
+        $query->whereHas('produit', function ($q) use ($search) {
+
+            $q->where('nom', 'like', "%{$search}%")
+              ->orWhere('reference', 'like', "%{$search}%");
+        });
     }
 
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
+    if ($request->filled('produit_id')) {
+        $query->where('produit_id', $request->produit_id);
+    }
+
+    $mouvements = $query
+        ->latest('date_mouvement')
+        ->latest('id')
+        ->paginate(15)
+        ->withQueryString();
+
+    $produits = Produit::orderBy('nom')->get();
+
+    return view(
+        'mouvements.index',
+        compact(
+            'mouvements',
+            'produits'
+        )
+    );
+}
     public function store(Request $request)
     {
         $data = $request->validate([

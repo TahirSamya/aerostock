@@ -14,6 +14,46 @@
     </div>
 </div>
 
+{{-- Indicateurs globaux : ce que tout responsable de stock veut voir en premier --}}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="sf-stat-card">
+            <div class="sf-stat-icon sky"><i class="bi bi-cash-stack"></i></div>
+            <div>
+                <div class="sf-stat-label">Valeur du stock</div>
+                <div class="sf-stat-value">{{ number_format($valeurTotaleStock, 0, ',', ' ') }} MAD</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="sf-stat-card">
+            <div class="sf-stat-icon teal"><i class="bi bi-box-seam"></i></div>
+            <div>
+                <div class="sf-stat-label">Articles référencés</div>
+                <div class="sf-stat-value">{{ $nbArticles }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="sf-stat-card">
+            <div class="sf-stat-icon amber"><i class="bi bi-exclamation-triangle"></i></div>
+            <div>
+                <div class="sf-stat-label">Articles en alerte</div>
+                <div class="sf-stat-value {{ $nbArticlesEnAlerte > 0 ? 'danger' : '' }}">{{ $nbArticlesEnAlerte }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="sf-stat-card">
+            <div class="sf-stat-icon rust"><i class="bi bi-x-octagon"></i></div>
+            <div>
+                <div class="sf-stat-label">En rupture</div>
+                <div class="sf-stat-value {{ $nbArticlesRupture > 0 ? 'danger' : '' }}">{{ $nbArticlesRupture }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if($topConsommation->isEmpty())
     <div class="sf-panel p-4 text-center text-muted">
         Aucune sortie de stock enregistrée sur cette période.

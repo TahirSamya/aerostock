@@ -9,9 +9,14 @@ class TransfertStock extends Model
     protected $table = 'transferts_stock';
 
     protected $fillable = [
-        'produit_id', 'user_id', 'emplacement_source',
-        'emplacement_destination', 'quantite', 'date_transfert',
-    ];
+    'produit_id',
+    'user_id',
+    'emplacement_source',
+    'emplacement_destination',
+    'quantite',
+    'date_transfert',
+    'statut',
+];
 
     public function produit()
     {

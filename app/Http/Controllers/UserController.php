@@ -44,6 +44,17 @@ class UserController extends Controller
         return back()->with('success', 'Utilisateur modifié.');
     }
 
+    public function resetPassword(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'password' => ['required', Password::min(8)],
+        ]);
+
+        $user->update(['password' => bcrypt($data['password'])]);
+
+        return back()->with('success', "Mot de passe de {$user->name} réinitialisé avec succès.");
+    }
+
     public function destroy(User $user)
     {
         // On empêche un admin de se supprimer lui-même par erreur

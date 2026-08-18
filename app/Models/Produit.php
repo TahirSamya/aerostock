@@ -32,6 +32,11 @@ class Produit extends Model
         return $this->hasMany(StockEmplacement::class);
     }
 
+    public function historiquePrix()
+    {
+        return $this->hasMany(PrixAchatHistorique::class)->orderByDesc('date_changement');
+    }
+
     /**
      * Quantité déjà répartie dans un emplacement précis (somme de stock_emplacements).
      */
@@ -91,4 +96,13 @@ class Produit extends Model
         }
         return 'bas';
     }
+
+
+
+  public function criticiteAutomatique(): string
+{
+    return $this->quantite < $this->seuil_alerte
+        ? 'critique'
+        : 'normal';
+}
 }

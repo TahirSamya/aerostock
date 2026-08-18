@@ -52,6 +52,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/transferts', [TransfertController::class, 'index'])->name('transferts.index');
     Route::post('/transferts', [TransfertController::class, 'store'])->name('transferts.store');
 
+
+    Route::get('/transferts/export/xlsx', [TransfertController::class, 'exportXlsx'])
+    ->name('transferts.export.xlsx');
+
+    Route::get('/transferts/export/pdf', [TransfertController::class, 'exportPdf'])
+    ->name('transferts.export.pdf');
+    Route::put('/transferts/{transfert}/annuler',[TransfertController::class, 'annuler'])
+    ->name('transferts.annuler');
+
     Route::get('/commandes', [CommandeFournisseurController::class, 'index'])->name('commandes.index');
     Route::post('/commandes', [CommandeFournisseurController::class, 'store'])->name('commandes.store');
     Route::post('/commandes/{commande}/receptionner', [CommandeFournisseurController::class, 'receptionner'])->name('commandes.receptionner');
@@ -68,6 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/utilisateurs', [UserController::class, 'index'])->name('users.index');
         Route::post('/utilisateurs', [UserController::class, 'store'])->name('users.store');
         Route::put('/utilisateurs/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('/utilisateurs/{user}/mot-de-passe', [UserController::class, 'resetPassword'])->name('users.reset-password');
         Route::delete('/utilisateurs/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });

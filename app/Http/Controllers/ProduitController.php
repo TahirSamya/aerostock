@@ -12,7 +12,7 @@ class ProduitController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Produit::with(['category', 'fournisseur', 'emplacements']);
+        $query = Produit::with(['category', 'fournisseur', 'emplacements', 'historiquePrix']);
 
         if ($request->filled('search')) {
             $s = $request->search;
@@ -54,7 +54,7 @@ class ProduitController extends Controller
             'quantite_max' => 'nullable|integer|min:0',
             'prix_achat' => 'required|numeric|min:0',
             'emplacement' => 'nullable|string|max:255',
-            'criticite' => 'required|in:normal,critique',
+            // 'criticite' => 'required|in:normal,critique',
         ]);
 
         // La référence n'est jamais saisie par l'utilisateur : elle est toujours générée
@@ -64,6 +64,10 @@ class ProduitController extends Controller
             $category = Category::whereKey($data['category_id'])->lockForUpdate()->firstOrFail();
             $data['reference'] = $this->nextReference($category);
 
+            $data['criticite'] =
+    $data['quantite'] < $data['seuil_alerte']
+        ? 'critique'
+        : 'normal';
             return Produit::create($data);
         });
 
@@ -80,11 +84,26 @@ class ProduitController extends Controller
             'quantite_max' => 'nullable|integer|min:0',
             'prix_achat' => 'required|numeric|min:0',
             'emplacement' => 'nullable|string|max:255',
-            'criticite' => 'required|in:normal,critique',
+            // 'criticite' => 'required|in:normal,critique',
         ]);
         // La quantité ne se modifie pas ici : uniquement via les mouvements de stock.
         // La référence non plus : elle est figée dès la création de l'article.
+        $ancienPrix = $produit->prix_achat;
+
+        $data['criticite'] =
+    $produit->quantite < $data['seuil_alerte']
+        ? 'critique'
+        : 'normal';
         $produit->update($data);
+
+        // Historisation automatique : on ne garde une trace que si le prix a réellement changé,
+        // pour éviter de polluer l'historique à chaque simple modification de nom/catégorie.
+        if (bccomp((string) $ancienPrix, (string) $data['prix_achat'], 2) !== 0) {
+            $produit->historiquePrix()->create([
+                'prix_achat' => $data['prix_achat'],
+                'date_changement' => now()->toDateString(),
+            ]);
+        }
 
         return back()->with('success', 'Produit modifié avec succès.');
     }

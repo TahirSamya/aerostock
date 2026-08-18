@@ -134,9 +134,19 @@
                         <tr>
                             <td>{{ $m->produit->nom }}</td>
                             <td>
-                                <span class="sf-badge {{ $m->type === 'entree' ? 'sf-badge-teal' : 'sf-badge-rust' }}">
-                                    {{ $m->type === 'entree' ? 'Entrée' : 'Sortie' }}
-                                </span>
+                                @php
+                                    $badgeMvt = match($m->type) {
+                                        'entree' => 'sf-badge-teal',
+                                        'sortie' => 'sf-badge-rust',
+                                        default => 'sf-badge-amber',
+                                    };
+                                    $labelMvt = match($m->type) {
+                                        'entree' => 'Entrée',
+                                        'sortie' => 'Sortie',
+                                        default => 'Ajustement',
+                                    };
+                                @endphp
+                                <span class="sf-badge {{ $badgeMvt }}">{{ $labelMvt }}</span>
                             </td>
                             <td>{{ $m->quantite }}</td>
                         </tr>

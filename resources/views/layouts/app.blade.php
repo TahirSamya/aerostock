@@ -69,36 +69,81 @@
         </button>
     </form>
 </aside>
+<div class="sf-overlay" onclick="this.classList.remove('show'); document.querySelector('.sf-sidebar').classList.remove('show');"></div>
+
 
 <div class="sf-topbar">
-    <form action="{{ route('produits.index') }}" method="GET" class="sf-topbar-search">
-        <i class="bi bi-search"></i>
-        <input type="text" name="search" placeholder="Rechercher un article, une référence...">
-    </form>
+
+    <button type="button"
+            class="sf-burger"
+            onclick="document.querySelector('.sf-sidebar').classList.toggle('show');
+                     document.querySelector('.sf-overlay').classList.toggle('show');">
+        <i class="bi bi-list"></i>
+    </button>
 
     <div class="ms-auto sf-bell">
-        <button type="button" class="sf-bell-btn" onclick="document.getElementById('sfBellMenu').classList.toggle('show')">
+
+        <button type="button"
+                class="sf-bell-btn"
+                onclick="document.getElementById('sfBellMenu').classList.toggle('show')">
+
             <i class="bi bi-bell"></i>
+
             @if(($alertesCount ?? 0) > 0)
-                <span class="sf-bell-dot">{{ $alertesCount > 9 ? '9+' : $alertesCount }}</span>
+                <span class="sf-bell-dot">
+                    {{ $alertesCount > 9 ? '9+' : $alertesCount }}
+                </span>
             @endif
+
         </button>
+
         <div class="sf-bell-menu" id="sfBellMenu">
-            <div class="sf-bell-menu-head">Articles en alerte</div>
+
+            <div class="sf-bell-menu-head">
+                Articles en alerte
+            </div>
+
             @forelse(($alertesTop ?? []) as $p)
-                <a href="{{ route('produits.index') }}" class="sf-bell-item">
-                    <div class="t">{{ $p->nom }}</div>
-                    <div class="s">{{ $p->category->nom ?? '' }} · stock {{ $p->quantite }} / seuil {{ $p->seuil_alerte }}</div>
+
+                <a href="{{ route('produits.index') }}"
+                   class="sf-bell-item">
+
+                    <div class="t">
+                        {{ $p->nom }}
+                    </div>
+
+                    <div class="s">
+                        {{ $p->category->nom ?? '' }}
+                        · stock {{ $p->quantite }}
+                        / seuil {{ $p->seuil_alerte }}
+                    </div>
+
                 </a>
+
             @empty
-                <div class="sf-bell-empty">Aucune alerte en cours.</div>
+
+                <div class="sf-bell-empty">
+                    Aucune alerte en cours.
+                </div>
+
             @endforelse
+
             @if(($alertesCount ?? 0) > 0)
-                <div class="sf-bell-foot"><a href="{{ route('dashboard') }}">Voir toutes les alertes</a></div>
+
+                <div class="sf-bell-foot">
+                    <a href="{{ route('dashboard') }}">
+                        Voir toutes les alertes
+                    </a>
+                </div>
+
             @endif
+
         </div>
+
     </div>
+
 </div>
+
 
 <main class="sf-main">
     @if(session('success'))
@@ -123,6 +168,14 @@ document.addEventListener('click', function (e) {
     const menu = document.getElementById('sfBellMenu');
     if (menu && !menu.contains(e.target) && !e.target.closest('.sf-bell-btn')) {
         menu.classList.remove('show');
+    }
+});
+document.addEventListener('click', function (e) {
+    const sidebar = document.querySelector('.sf-sidebar');
+    const overlay = document.querySelector('.sf-overlay');
+    if (sidebar.classList.contains('show') && !sidebar.contains(e.target) && !e.target.closest('.sf-burger')) {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
     }
 });
 </script>
